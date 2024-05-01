@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/login.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
@@ -20,6 +21,7 @@ class App extends StatelessWidget {
       ),
       routes: {
         AppRoutes.login: (context) => const Login(),
+        AppRoutes.listServiceOrder: (context) => const ListServiceOrder(),
       },
     );
   }
