@@ -18,6 +18,13 @@ class App extends StatelessWidget {
               primary: const Color(0xff638CF4),
               secondary: const Color(0xffFFAB00),
             ),
+        textTheme: ThemeData.light().textTheme.copyWith(
+              titleLarge: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
       ),
       routes: {
         AppRoutes.login: (context) => const Login(),
