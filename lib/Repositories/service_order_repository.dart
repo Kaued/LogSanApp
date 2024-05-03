@@ -13,8 +13,14 @@ class ServiceOrderRepository {
         toFirestore: (serviceOrder, options) => serviceOrder.toJson(),
       );
 
-  Future<List<QueryDocumentSnapshot<ServiceOrder>>> listServiceOrders(
-      {String? field, String value = ""}) async {
-    return await _serviceOrderCollection.get().then((value) => value.docs);
+  Stream<QuerySnapshot<ServiceOrder>> listServiceOrders(
+      {String? field, String value = ""}) {
+    if (field != null && field.isNotEmpty) {
+      return _serviceOrderCollection
+          .orderBy(field)
+          .startAt([value]).snapshots();
+    }
+
+    return _serviceOrderCollection.snapshots();
   }
 }

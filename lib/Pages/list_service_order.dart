@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:intl/intl.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
+
+import '../Components/ServiceOrders/service_order_list.dart';
 
 class ListServiceOrder extends StatefulWidget {
   const ListServiceOrder({super.key});
@@ -15,10 +18,11 @@ class ListServiceOrder extends StatefulWidget {
 
 class _ListServiceOrderState extends State<ListServiceOrder> {
   bool inSearch = false;
-  final controller = ServiceOrderController();
-  final dateBr = DateFormat("dd/MM/yyyy hh:mm");
+  final controller = ServiceOrderController.instance;
+  Timer? _debounce;
 
-  List<QueryDocumentSnapshot<ServiceOrder>> serviceOrders = [];
+  Stream<QuerySnapshot<ServiceOrder>> streamServiceOrders =
+      const Stream.empty();
   List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
 
   @override
@@ -28,132 +32,111 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
   }
 
   void list() async {
-    var value = await controller.getServiceOrders();
+    var orders = controller.getServiceOrders();
     var type = await controller.getTypeOrders();
 
     setState(() {
-      serviceOrders = value;
+      streamServiceOrders = orders;
       typeOrders = type;
     });
   }
 
-  void toggleAppBar() {
+  void toggleSearch() {
+    if (inSearch) {
+      var orders = controller.getServiceOrders();
+
+      setState(() {
+        inSearch = !inSearch;
+        streamServiceOrders = orders;
+      });
+
+      return;
+    }
+
     setState(() {
       inSearch = !inSearch;
     });
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _debounce?.cancel();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+
+    _debounce = Timer(const Duration(seconds: 1), () {
+      var orders =
+          controller.getServiceOrders(field: "placeName", value: query);
+
+      setState(() {
+        streamServiceOrders = orders;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-        appBar: AppBar(
-          title: Animate(
-            effects: const [FadeEffect()],
-            child: inSearch
-                ? const TextField(
-                    decoration: InputDecoration(
-                      hintText: "Pesquisar",
-                      fillColor: Colors.white,
-                      hintStyle: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: TextStyle(
+      appBar: AppBar(
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: inSearch
+              ? TextField(
+                  decoration: const InputDecoration(
+                    hintText: "Pesquisar",
+                    fillColor: Colors.white,
+                    hintStyle: TextStyle(
                       color: Colors.white,
                     ),
-                  )
-                : const Text("Ordem de Serviço"),
-          ),
-          actions: [
-            IconButton(
-              onPressed: toggleAppBar,
-              icon: Icon(inSearch ? Icons.close : Icons.search),
-            )
-          ],
-        ),
-        body: ListView.builder(
-          itemCount: serviceOrders.length,
-          itemBuilder: (context, index) {
-            final serviceOrder = serviceOrders[index].data();
-            final typeOrder = typeOrders
-                .where(
-                    (doc) => doc.id == serviceOrders[index].data().typeOrderId)
-                .first
-                .data();
-
-            IconData iconType = Icons.precision_manufacturing;
-
-            switch (typeOrder.name) {
-              case "Troca":
-                iconType = Icons.change_circle_outlined;
-                break;
-              case "Instalação":
-                iconType = Icons.add_business_outlined;
-                break;
-              case "Desistalação":
-                iconType = Icons.remove;
-                break;
-              case "Suprimentos":
-                iconType = Icons.delivery_dining;
-                break;
-              default:
-            }
-
-            return Card(
-              child: Dismissible(
-                key: Key(serviceOrder.referenceNumber),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  child: const Icon(
-                    Icons.delete,
+                  ),
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  child: ListTile(
-                    leading: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          iconType,
-                          size: 32,
-                          color: theme.colorScheme.primary,
-                        ),
-                        Text(
-                          typeOrder.name,
-                          style: theme.textTheme.labelSmall,
-                        )
-                      ],
-                    ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          serviceOrder.referenceNumber,
-                          style: theme.textTheme.titleLarge,
-                        ),
-                        Text(
-                          " ${dateBr.format(serviceOrder.maxDate.toDate())}",
-                          style: theme.textTheme.titleMedium!.copyWith(
-                              color: theme.colorScheme.secondary,
-                              fontWeight: FontWeight.w700),
-                        )
-                      ],
-                    ),
-                    subtitle: Container(
-                      child: Text(serviceOrder.placeName),
-                    ),
-                  ),
-                ),
-              ),
+                  onChanged: _onSearchChanged,
+                )
+              : const Text("Ordem de Serviço"),
+        ),
+        actions: [
+          IconButton(
+            onPressed: toggleSearch,
+            icon: Icon(inSearch ? Icons.close : Icons.search),
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      body: StreamBuilder<QuerySnapshot<ServiceOrder>>(
+        stream: streamServiceOrders,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done &&
+              snapshot.connectionState != ConnectionState.active) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ));
+          }
+
+          if (!snapshot.hasData) {
+            return const Center(
+              child: Text("Não há Ordens de Serviço"),
+            );
+          }
+
+          final serviceOrders = snapshot.data!.docs;
+
+          return ServiceOrderList(
+            serviceOrders: serviceOrders,
+            typeOrders: typeOrders,
+          );
+        },
+      ),
+    );
   }
 }

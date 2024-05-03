@@ -7,12 +7,23 @@ import 'package:logsan_app/Repositories/type_order_repository.dart';
 class ServiceOrderController {
   final ServiceOrderRepository _serviceOrderRepository =
       ServiceOrderRepository.instance;
-
   final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
 
-  Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrders() async {
-    final orders = await _serviceOrderRepository.listServiceOrders();
+  static ServiceOrderController instance = ServiceOrderController._();
 
+  ServiceOrderController._();
+
+  Stream<QuerySnapshot<ServiceOrder>> getServiceOrders(
+      {String? field, String value = ""}) {
+    if (value.isNotEmpty && field != null) {
+      final orders = _serviceOrderRepository.listServiceOrders(
+        field: field,
+        value: value,
+      );
+      return orders;
+    }
+
+    final orders = _serviceOrderRepository.listServiceOrders();
     return orders;
   }
 
