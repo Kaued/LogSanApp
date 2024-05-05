@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,47 +11,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final txtEmail = TextEditingController();
   final txtPassword = TextEditingController();
-  final firestore = FirebaseFirestore.instance;
   bool _obscureText = true;
-
-  Future<void> _signIn(BuildContext context) async {
-    try {
-      var user = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: txtEmail.text,
-            password: txtPassword.text,
-          )
-          .then((value) => value.user);
-
-      var userData = await firestore
-          .collection("usersRoles")
-          .where('__name__', isEqualTo: user!.uid)
-          .get();
-          
-      bool isAdmin = userData.docs.first['isAdmin'];
-
-      String route = '/home';
-      if (isAdmin) {
-        route = '/home';
-      }
-
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pushReplacementNamed(route);
-    } on FirebaseAuthException catch (ex) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ex.message!,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+  final authController = AuthController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +124,7 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () => _signIn(context),
+                        onPressed: () => authController.login(context, txtEmail.text, txtPassword.text),
                       ),
                     ),
                   ],

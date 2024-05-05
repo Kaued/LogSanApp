@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,11 +9,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  
-  void _logout(BuildContext context) {
-    FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, "/login");
-  }
+  final authController = AuthController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +18,7 @@ class _HomeState extends State<Home> {
         title: const Text('Home'),
         actions: [
           IconButton(
-            onPressed: () => _logout(context),
+            onPressed: () => authController.logout(context),
             icon: const Icon(Icons.logout),
           ),
         ],
