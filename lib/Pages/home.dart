@@ -11,6 +11,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final authController = AuthController.instance;
 
+  Future<void> _logout(context) async {
+    var isSuccessLogout = await authController.logout();
+
+    if (isSuccessLogout) {
+      Navigator.pushReplacementNamed(context, "/login");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +26,7 @@ class _HomeState extends State<Home> {
         title: const Text('Home'),
         actions: [
           IconButton(
-            onPressed: () => authController.logout(context),
+            onPressed: () => _logout(context),
             icon: const Icon(Icons.logout),
           ),
         ],

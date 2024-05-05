@@ -14,6 +14,39 @@ class _LoginState extends State<Login> {
   bool _obscureText = true;
   final authController = AuthController.instance;
 
+  Future<void> _login(context) async {
+    try {
+      // var userData = await firestore
+      //     .collection("usersRoles")
+      //     .where('__name__', isEqualTo: user!.uid)
+      //     .get();
+
+      // bool isAdmin = userData.docs.first['isAdmin'];
+
+      // String route = '/home';
+      // if (isAdmin) {
+      //   route = '/home';
+      // }
+      var isSuccessLogin = await authController.login(txtEmail.text, txtPassword.text);
+
+      if (isSuccessLogin) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +157,7 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () => authController.login(context, txtEmail.text, txtPassword.text),
+                        onPressed: () => _login(context),
                       ),
                     ),
                   ],
