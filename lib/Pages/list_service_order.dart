@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
+import 'package:logsan_app/Utils/app_routes.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
 import '../Components/ServiceOrders/service_order_list.dart';
 
@@ -20,6 +22,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
   bool inSearch = false;
   final controller = ServiceOrderController.instance;
   Timer? _debounce;
+  String field = "";
 
   Stream<QuerySnapshot<ServiceOrder>> streamServiceOrders =
       const Stream.empty();
@@ -29,6 +32,10 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
   void initState() {
     super.initState();
     list();
+
+    setState(() {
+      field = controller.getColumns().entries.first.value;
+    });
   }
 
   void list() async {
@@ -71,8 +78,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
     }
 
     _debounce = Timer(const Duration(seconds: 1), () {
-      var orders =
-          controller.getServiceOrders(field: "placeName", value: query);
+      var orders = controller.getServiceOrders(field: field, value: query);
 
       setState(() {
         streamServiceOrders = orders;
@@ -106,11 +112,35 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
           IconButton(
             onPressed: toggleSearch,
             icon: Icon(inSearch ? Icons.close : Icons.search),
+          ),
+          PopupMenuButton(
+            icon: const Icon(Icons.filter_alt_outlined),
+            itemBuilder: (context) {
+              return controller
+                  .getColumns()
+                  .entries
+                  .map((item) => PopupMenuItem(
+                        value: item.value,
+                        child: Text(item.key),
+                      ))
+                  .toList();
+            },
+            initialValue: field,
+            onSelected: (value) {
+              setState(() {
+                field = value;
+              });
+            },
           )
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            AppRoutes.serviceOrderForm,
+            arguments: FormArguments(isAddMode: true),
+          );
+        },
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<QuerySnapshot<ServiceOrder>>(

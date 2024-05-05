@@ -1,3 +1,4 @@
 {
-  "cmake.configureOnOpen": true
+  "cmake.configureOnOpen": true,
+  "cSpell.language": "en,pt-BR"
 }
