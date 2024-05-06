@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
+import 'package:logsan_app/Controllers/user_controller.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,6 +11,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final authController = AuthController.instance;
+  final userController = UserController.instance;
 
   Future<void> _logout(context) async {
     var isSuccessLogout = await authController.logout();
@@ -17,6 +19,10 @@ class _HomeState extends State<Home> {
     if (isSuccessLogout) {
       Navigator.pushReplacementNamed(context, "/login");
     }
+  }
+
+  Future<void> _testAction() async {
+    // print(userController.list());
   }
 
   @override
@@ -31,7 +37,10 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: const Text("teste"),
+      body: IconButton(
+        onPressed: () => _testAction(),
+        icon: const Icon(Icons.add),
+      ),
     );
   }
 }
