@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Pages/bottom_bar.dart';
+import 'package:logsan_app/Utils/app_routes.dart';
 
-class UserForm extends StatelessWidget {
+class UserForm extends StatefulWidget {
   const UserForm({super.key});
 
+  @override
+  State<UserForm> createState() => _UserFormState();
+}
+
+class _UserFormState extends State<UserForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,40 +59,6 @@ class UserForm extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        selectedFontSize: 12,
-        currentIndex: 2,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: "",
-          ),
-        ],
       ),
     );
   }

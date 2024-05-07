@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Pages/bottom_bar.dart';
 
 class User {
   final String name;
@@ -31,28 +32,6 @@ class UserList extends StatelessWidget {
             title: Text(users[index].name),
           );
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.route,
-            ),
-            label: "",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.people,
-            ),
-            label: "",
-          ),
-        ],
       ),
     );
   }

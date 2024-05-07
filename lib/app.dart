@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Pages/casquinha.dart';
 import 'package:logsan_app/Pages/login.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
@@ -24,6 +25,7 @@ class App extends StatelessWidget {
         AppRoutes.login: (context) => const Login(),
         AppRoutes.userForm: (context) => const UserForm(),
         AppRoutes.userList: (context) => const UserList(),
+        AppRoutes.casquinha: (context) => Casquinha()
       },
     );
   }
