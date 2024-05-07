@@ -1,7 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:logsan_app/Components/Equipments/equipment_modal.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
+import 'package:logsan_app/Models/equipment.dart';
 import 'package:logsan_app/Models/type_order.dart';
+import 'package:logsan_app/Utils/Classes/address.dart';
 
 import '../Components/ServiceOrders/address_modal.dart';
 import '../Components/ServiceOrders/service_order_form_input.dart';
@@ -16,6 +23,8 @@ class ServiceOrderForm extends StatefulWidget {
 class _ServiceOrderFormState extends State<ServiceOrderForm> {
   final ServiceOrderController controller = ServiceOrderController.instance;
   List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
+  Address? address;
+  Equipment? installEquipment;
 
   @override
   void initState() {
@@ -34,6 +43,35 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
+    final theme = Theme.of(context);
+
+    void showModalAddress() {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => AddressModal(
+          onSaved: (value) => setState(() {
+            address = value;
+          }),
+          formValues: address,
+        ),
+        backgroundColor: Colors.transparent,
+      );
+    }
+
+    void showModalInstallEquipment() {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => EquipmentModal(
+          onSaved: (value) {
+            setState(() {
+              installEquipment = value;
+            });
+          },
+          formValues: installEquipment,
+        ),
+        backgroundColor: Colors.transparent,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -107,39 +145,96 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 14),
-                      child: DropdownButtonFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "O Tipo de Ordem de Serviço deve ser preenchido";
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Tipo de Ordem de Serviço",
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField(
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "O Tipo de Ordem de Serviço deve ser preenchido";
+                              }
+                              return null;
+                            },
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Tipo de Ordem de Serviço",
+                            ),
+                            items: typeOrders.map((typeOrder) {
+                              return DropdownMenuItem(
+                                value: typeOrder.id,
+                                child: Text(typeOrder.data().name),
+                              );
+                            }).toList(),
+                            onChanged: (value) {},
+                          ),
                         ),
-                        items: typeOrders.map((typeOrder) {
-                          return DropdownMenuItem(
-                            value: typeOrder.id,
-                            child: Text(typeOrder.data().name),
-                          );
-                        }).toList(),
-                        onChanged: (value) {},
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Text(
+                              "Endereço",
+                              style: theme.textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            flex: 5,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: address == null
+                                  ? ElevatedButton(
+                                      onPressed: () => showModalAddress(),
+                                      child: const Text("Definir Endereço"),
+                                    )
+                                  : RichText(
+                                      text: TextSpan(
+                                        spellOut: true,
+                                        children: [
+                                          TextSpan(
+                                            spellOut: true,
+                                            text:
+                                                "${address!.street}, ${address!.number?.toString()} - ${address!.neighborhood} ${address!.city} - ${address!.state}, ${address!.cep} ",
+                                          ),
+                                          TextSpan(
+                                            style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontWeight: FontWeight.w700,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
+                                            text: "Mudar endereço",
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap =
+                                                  () => showModalAddress(),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                     Row(
                       children: [
-                        const Text("Endereço"),
+                        Text(
+                          "Equipamento Instalar",
+                          style: theme.textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => AddressModal(
-                                onSaved: (p0) => print(p0),
-                              ),
-                            );
-                          },
-                          child: const Text("Definir Endereço"),
+                          onPressed: () => showModalInstallEquipment(),
+                          child: const Text("Definir equipamento a instalar"),
                         )
                       ],
                     ),

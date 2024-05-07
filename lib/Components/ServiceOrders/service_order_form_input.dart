@@ -32,6 +32,7 @@ class ServiceOrderFormInput extends StatelessWidget {
           border: const OutlineInputBorder(),
         ),
         validator: validator,
+        onSaved: onSaved,
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
       ),

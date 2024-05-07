@@ -22,7 +22,7 @@ class ServiceOrderItem extends StatelessWidget {
 
     return Card(
       color: Colors.grey[200],
-      elevation: 2  ,
+      elevation: 2,
       child: Dismissible(
         key: Key(serviceOrder.referenceNumber),
         direction: DismissDirection.endToStart,
@@ -67,9 +67,7 @@ class ServiceOrderItem extends StatelessWidget {
                 )
               ],
             ),
-            subtitle: Container(
-              child: Text(serviceOrder.placeName),
-            ),
+            subtitle: Text(serviceOrder.placeName),
           ),
         ),
       ),
