@@ -26,15 +26,15 @@ class ServiceOrder {
           address: Address(
             cep: json["cep"]! as String,
             city: json["city"]! as String,
-            complement: json["complement"]! as String,
+            complement: json["complement"]! as String?,
             neighborhood: json["neighborhood"]! as String,
             number: json["number"]! as int,
             state: json["state"]! as String,
             street: json["street"]! as String,
           ),
           maxDate: json["maxDate"]! as Timestamp,
-          installEquipment: json["installEquipment"]! as String,
-          removeEquipment: json["removeEquipnment"]! as String,
+          installEquipment: json["installEquipment"] as String?,
+          removeEquipment: json["removeEquipment"] as String?,
         );
 
   String openingHours;

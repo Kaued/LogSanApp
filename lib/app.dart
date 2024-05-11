@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/login.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
@@ -32,6 +33,12 @@ class App extends StatelessWidget {
         AppRoutes.listServiceOrder: (context) => const ListServiceOrder(),
         AppRoutes.serviceOrderForm: (context) => const ServiceOrderForm(),
       },
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale("pt", "BR")],
     );
   }
 }

@@ -21,6 +21,24 @@ class ServiceOrderRepository {
           .startAt([value]).snapshots();
     }
 
-    return _serviceOrderCollection.snapshots();
+    return _serviceOrderCollection
+        .where("deleted", isEqualTo: false)
+        .snapshots();
+  }
+
+  Future<DocumentReference<ServiceOrder>> createServiceOrder(
+      ServiceOrder serviceOrder) async {
+    return await _serviceOrderCollection.add(serviceOrder);
+  }
+
+  Future<void> updateServiceOrder(ServiceOrder serviceOrder, String id) async {
+    return await _serviceOrderCollection.doc(id).update(serviceOrder.toJson());
+  }
+
+  Future<void> deleteServiceOrder(String id) async {
+    final serviceOrder = await _serviceOrderCollection.doc(id).get();
+    return await _serviceOrderCollection
+        .doc(id)
+        .update({...serviceOrder.data()!.toJson(), "deleted": true});
   }
 }
