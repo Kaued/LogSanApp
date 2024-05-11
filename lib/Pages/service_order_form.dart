@@ -25,6 +25,9 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
   List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
   Address? address;
   Equipment? installEquipment;
+  bool showServiceInformation = true;
+  bool showCompanyInfomation = true;
+  bool showEquipmentInformation = true;
 
   @override
   void initState() {
@@ -80,8 +83,8 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20,
             vertical: 20,
+            horizontal: 10,
           ),
           child: Column(
             children: [
@@ -89,138 +92,326 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                 key: formKey,
                 child: Column(
                   children: [
-                    ServiceOrderFormInput(
-                      labelText: "Numero de Referência",
-                      hintText: "O numero de referência da ordem de serviço",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O numero de referência deve ser preenchido";
-                        }
-                        return null;
-                      },
-                    ),
-                    ServiceOrderFormInput(
-                      hintText:
-                          "O estabelecimento que a ordem de serviço pertence",
-                      labelText: "Estabelecimento",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O estabelcimento ser informado";
-                        }
-                        return null;
-                      },
-                    ),
-                    ServiceOrderFormInput(
-                      labelText: "Horário de Atendimento",
-                      hintText:
-                          "O horário de atendimento que a ordem de serviço pertence",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O horário de atendimento deve ser informado";
-                        }
-                        return null;
-                      },
-                    ),
-                    ServiceOrderFormInput(
-                      labelText: "Responsável",
-                      hintText:
-                          "O responsável do estabelecimento que a ordem de serviço pertence",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O responsável do estabelecimento deve ser informado";
-                        }
-                        return null;
-                      },
-                    ),
-                    ServiceOrderFormInput(
-                      labelText: "Telefone",
-                      hintText:
-                          "O responsável do estabelecimento que a ordem de serviço pertence",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O responsável do estabelecimento deve ser informado";
-                        }
-                        return null;
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 14),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButtonFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "O Tipo de Ordem de Serviço deve ser preenchido";
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Tipo de Ordem de Serviço",
-                            ),
-                            items: typeOrders.map((typeOrder) {
-                              return DropdownMenuItem(
-                                value: typeOrder.id,
-                                child: Text(typeOrder.data().name),
-                              );
-                            }).toList(),
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    Card(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: Column(
                         children: [
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "Endereço",
-                              style: theme.textTheme.titleMedium!.copyWith(
-                                fontWeight: FontWeight.w600,
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              showServiceInformation = !showServiceInformation;
+                            }),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 15,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.article,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          "Dados da Ordem de Serviço",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Icon(
+                                    showServiceInformation
+                                        ? Icons.expand_more
+                                        : Icons.expand_less,
+                                  )
+                                ],
                               ),
                             ),
                           ),
-                          Flexible(
-                            flex: 5,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: address == null
-                                  ? ElevatedButton(
-                                      onPressed: () => showModalAddress(),
-                                      child: const Text("Definir Endereço"),
-                                    )
-                                  : RichText(
-                                      text: TextSpan(
-                                        spellOut: true,
-                                        children: [
-                                          TextSpan(
-                                            spellOut: true,
-                                            text:
-                                                "${address!.street}, ${address!.number?.toString()} - ${address!.neighborhood} ${address!.city} - ${address!.state}, ${address!.cep} ",
+                          Visibility(
+                            visible: showServiceInformation,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 20,
+                              ),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  ServiceOrderFormInput(
+                                    labelText: "Numero de Referência",
+                                    hintText:
+                                        "O numero de referência da ordem de serviço",
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "O numero de referência deve ser preenchido";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 14),
+                                    child: ButtonTheme(
+                                      alignedDropdown: true,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButtonFormField(
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "O Tipo de Ordem de Serviço deve ser preenchido";
+                                            }
+                                            return null;
+                                          },
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText:
+                                                "Tipo de Ordem de Serviço",
                                           ),
-                                          TextSpan(
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontWeight: FontWeight.w700,
-                                              color:
-                                                  theme.colorScheme.secondary,
-                                            ),
-                                            text: "Mudar endereço",
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap =
-                                                  () => showModalAddress(),
-                                          )
-                                        ],
+                                          items: typeOrders.map((typeOrder) {
+                                            return DropdownMenuItem(
+                                              value: typeOrder.id,
+                                              child:
+                                                  Text(typeOrder.data().name),
+                                            );
+                                          }).toList(),
+                                          onChanged: (value) {},
+                                        ),
                                       ),
                                     ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          )
+                          ),
+                        ],
+                      ),
+                    ),
+                    Card(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              showCompanyInfomation = !showCompanyInfomation;
+                            }),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 15,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.apartment,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          "Dados do Estabecimento",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Icon(
+                                    showCompanyInfomation
+                                        ? Icons.expand_more
+                                        : Icons.expand_less,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          AnimatedContainer(
+                            duration: const Duration(seconds: 3),
+                            width: double.infinity,
+                            height: showCompanyInfomation ? 450 : 0,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 20,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ServiceOrderFormInput(
+                                  hintText:
+                                      "O estabelecimento que a ordem de serviço pertence",
+                                  labelText: "Estabelecimento",
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "O estabelcimento ser informado";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                ServiceOrderFormInput(
+                                  labelText: "Horário de Atendimento",
+                                  hintText:
+                                      "O horário de atendimento que a ordem de serviço pertence",
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "O horário de atendimento deve ser informado";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                ServiceOrderFormInput(
+                                  labelText: "Responsável",
+                                  hintText:
+                                      "O responsável do estabelecimento que a ordem de serviço pertence",
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "O responsável do estabelecimento deve ser informado";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                ServiceOrderFormInput(
+                                  labelText: "Telefone",
+                                  hintText:
+                                      "O responsável do estabelecimento que a ordem de serviço pertence",
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "O responsável do estabelecimento deve ser informado";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                Row(
+                                  children: [
+                                    const Flexible(
+                                      flex: 2,
+                                      child: Divider(),
+                                    ),
+                                    Flexible(
+                                      flex: 4,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: ElevatedButton(
+                                          onPressed: () => showModalAddress(),
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 8,
+                                              horizontal: 4,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.add_circle,
+                                                  color: Colors.white,
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8),
+                                                  child: Text(
+                                                    "Adicionar Endereço",
+                                                    style: theme
+                                                        .textTheme.titleMedium!
+                                                        .copyWith(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Flexible(
+                                      flex: 2,
+                                      child: Divider(),
+                                    )
+                                  ],
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(10),
+                                //   child: Row(
+                                //     crossAxisAlignment:
+                                //         CrossAxisAlignment.start,
+                                //     children: [
+                                //       Flexible(
+                                //         flex: 1,
+                                //         child: Text(
+                                //           "Endereço",
+                                //           style: theme.textTheme.titleMedium!
+                                //               .copyWith(
+                                //             fontWeight: FontWeight.w600,
+                                //           ),
+                                //         ),
+                                //       ),
+                                //       Flexible(
+                                //         flex: 5,
+                                //         child: Padding(
+                                //           padding: const EdgeInsets.symmetric(
+                                //               horizontal: 8),
+                                //           child: address == null
+                                //               ? ElevatedButton(
+                                //                   onPressed: () =>
+                                //                       showModalAddress(),
+                                //                   child: const Text(
+                                //                       "Definir Endereço"),
+                                //                 )
+                                //               : RichText(
+                                //                   text: TextSpan(
+                                //                     spellOut: true,
+                                //                     children: [
+                                //                       TextSpan(
+                                //                         spellOut: true,
+                                //                         text:
+                                //                             "${address!.street}, ${address!.number?.toString()} - ${address!.neighborhood} ${address!.city} - ${address!.state}, ${address!.cep} ",
+                                //                       ),
+                                //                       TextSpan(
+                                //                         style: TextStyle(
+                                //                           decoration:
+                                //                               TextDecoration
+                                //                                   .underline,
+                                //                           fontWeight:
+                                //                               FontWeight.w700,
+                                //                           color: theme
+                                //                               .colorScheme
+                                //                               .secondary,
+                                //                         ),
+                                //                         text: "Mudar endereço",
+                                //                         recognizer:
+                                //                             TapGestureRecognizer()
+                                //                               ..onTap = () =>
+                                //                                   showModalAddress(),
+                                //                       )
+                                //                     ],
+                                //                   ),
+                                //                 ),
+                                //         ),
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -232,6 +423,9 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
+                        installEquipment != null
+                            ? Text(installEquipment!.logicalNumber)
+                            : Container(),
                         ElevatedButton(
                           onPressed: () => showModalInstallEquipment(),
                           child: const Text("Definir equipamento a instalar"),
