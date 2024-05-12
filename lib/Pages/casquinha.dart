@@ -6,6 +6,7 @@ import 'package:logsan_app/Utils/app_routes.dart';
 
 const Color searchBackground = Color(0xFFFAFAFA);
 
+// Tela home
 Widget _buildHomeScreen(context) {
   return Scaffold(
     appBar: AppBar(
