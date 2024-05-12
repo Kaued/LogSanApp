@@ -213,6 +213,7 @@ class _AddressModalState extends State<AddressModal> {
                                   hintText: "Rua do estabelecimento",
                                   validator: validateRequiredField),
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Flexible(
                                     flex: 2,

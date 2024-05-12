@@ -106,7 +106,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
                   ),
                   onChanged: _onSearchChanged,
                 )
-              : const Text("Ordem de Serviço"),
+              : const Text("Ordens de Serviço"),
         ),
         actions: [
           IconButton(
@@ -143,29 +143,32 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
         },
         child: const Icon(Icons.add),
       ),
-      body: StreamBuilder<QuerySnapshot<ServiceOrder>>(
-        stream: streamServiceOrders,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done &&
-              snapshot.connectionState != ConnectionState.active) {
-            return const Center(
-              child: CircularProgressIndicator(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: StreamBuilder<QuerySnapshot<ServiceOrder>>(
+          stream: streamServiceOrders,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done &&
+                snapshot.connectionState != ConnectionState.active) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (!snapshot.hasData) {
+              return const Center(
+                child: Text("Não há Ordens de Serviço"),
+              );
+            }
+
+            final serviceOrders = snapshot.data!.docs;
+
+            return ServiceOrderList(
+              serviceOrders: serviceOrders,
+              typeOrders: typeOrders,
             );
-          }
-
-          if (!snapshot.hasData) {
-            return const Center(
-              child: Text("Não há Ordens de Serviço"),
-            );
-          }
-
-          final serviceOrders = snapshot.data!.docs;
-
-          return ServiceOrderList(
-            serviceOrders: serviceOrders,
-            typeOrders: typeOrders,
-          );
-        },
+          },
+        ),
       ),
     );
   }

@@ -45,7 +45,7 @@ class ServiceOrderList extends StatelessWidget {
           case "Instalação":
             iconType = Icons.add_business_outlined;
             break;
-          case "Desistalação":
+          case "Desinstalação":
             iconType = Icons.remove;
             break;
           case "Suprimentos":
