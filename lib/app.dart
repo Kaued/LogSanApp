@@ -36,7 +36,7 @@ class App extends StatelessWidget {
         AppRoutes.login: (context) => const Login(),
         AppRoutes.userForm: (context) => const UserForm(),
         AppRoutes.userList: (context) => const UserList(),
-        AppRoutes.casquinha: (context) => Casquinha()
+        AppRoutes.casquinha: (context) => Casquinha(),
         AppRoutes.listServiceOrder: (context) => const ListServiceOrder(),
         AppRoutes.serviceOrderForm: (context) => const ServiceOrderForm(),
         AppRoutes.home: (context) => const Home(),

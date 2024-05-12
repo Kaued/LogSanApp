@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
 class UserForm extends StatefulWidget {
@@ -23,8 +25,11 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as FormArguments<UserForm>;
+    // Regex do email - validação
+    final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+    final arguments = ModalRoute.of(context)?.settings.arguments as FormArguments<Person>;
+    
     return Scaffold(
       appBar: AppBar(
         actions: [],
@@ -66,7 +71,10 @@ class _UserFormState extends State<UserForm> {
                     ),
                     validator: (value) {
                       if (value == null || value!.isEmpty) {
-                        return 'Por favor, insira um email';
+                        return 'Por favor, insira um e-mail';
+                      }
+                      if (!regex.hasMatch(value)) {
+                        return 'Por favor, insira um e-mail válido';
                       }
                       return null;
                     },
@@ -83,6 +91,9 @@ class _UserFormState extends State<UserForm> {
                     validator: (value) {
                       if (value == null || value!.isEmpty) {
                         return 'Por favor, insira uma senha';
+                      }
+                      if (value.length < 8) {
+                        return 'Por favor, insira uma senha válida';
                       }
                       return null;
                     },
