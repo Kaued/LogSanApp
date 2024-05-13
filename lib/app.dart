@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logsan_app/Pages/casquinha.dart';
 import 'package:logsan_app/Pages/login.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/home.dart';
-import 'package:logsan_app/Pages/login.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
@@ -41,6 +41,12 @@ class App extends StatelessWidget {
         AppRoutes.serviceOrderForm: (context) => const ServiceOrderForm(),
         AppRoutes.home: (context) => const Home(),
       },
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale("pt", "BR")],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logsan_app/Utils/Classes/address.dart';
 
 class ServiceOrder {
   ServiceOrder({
@@ -8,14 +9,8 @@ class ServiceOrder {
     required this.referenceNumber,
     required this.responsible,
     required this.typeOrderId,
-    required this.cep,
-    required this.city,
-    required this.neighborhood,
-    required this.number,
-    required this.state,
-    required this.street,
     required this.maxDate,
-    this.complement,
+    required this.address,
     this.removeEquipment,
     this.installEquipment,
   });
@@ -28,16 +23,18 @@ class ServiceOrder {
           referenceNumber: json["referenceNumber"]! as String,
           responsible: json["responsible"]! as String,
           typeOrderId: json["typeOrderId"]! as String,
-          cep: json["cep"]! as String,
-          city: json["city"]! as String,
-          complement: json["complement"]! as String,
-          neighborhood: json["neighborhood"]! as String,
-          number: json["number"]! as int,
-          state: json["state"]! as String,
-          street: json["street"]! as String,
+          address: Address(
+            cep: json["cep"]! as String,
+            city: json["city"]! as String,
+            complement: json["complement"]! as String?,
+            neighborhood: json["neighborhood"]! as String,
+            number: json["number"]! as int,
+            state: json["state"]! as String,
+            street: json["street"]! as String,
+          ),
           maxDate: json["maxDate"]! as Timestamp,
-          installEquipment: json["installEquipment"]! as String,
-          removeEquipment: json["removeEquipnment"]! as String,
+          installEquipment: json["installEquipment"] as String?,
+          removeEquipment: json["removeEquipment"] as String?,
         );
 
   String openingHours;
@@ -46,13 +43,7 @@ class ServiceOrder {
   String referenceNumber;
   String responsible;
   String typeOrderId;
-  String cep;
-  String city;
-  String? complement;
-  String neighborhood;
-  int number;
-  String state;
-  String street;
+  Address address;
   Timestamp maxDate;
   String? installEquipment;
   String? removeEquipment;
@@ -66,13 +57,13 @@ class ServiceOrder {
       "responsible": responsible,
       "typeOrderId": typeOrderId,
       "maxDate": maxDate,
-      "cep": cep,
-      "city": city,
-      "complement": complement,
-      "neighborhood": neighborhood,
-      "number": number,
-      "state": state,
-      "street": street,
+      "cep": address.cep,
+      "city": address.city,
+      "complement": address.complement,
+      "neighborhood": address.neighborhood,
+      "number": address.number,
+      "state": address.state,
+      "street": address.street,
       "installEquipment": installEquipment,
       "removeEquipment": removeEquipment,
     };

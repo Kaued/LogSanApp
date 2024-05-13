@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 
@@ -16,6 +17,13 @@ class ServiceOrderList extends StatelessWidget {
   final List<QueryDocumentSnapshot<ServiceOrder>> serviceOrders;
   final List<QueryDocumentSnapshot<TypeOrder>> typeOrders;
   final dateBr = DateFormat("dd/MM/yyyy hh:mm");
+  final controller = ServiceOrderController.instance;
+
+  void deleteServiceOrder(String id) {
+    if (id.isNotEmpty) {
+      controller.deletedServiceOrder(id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +45,7 @@ class ServiceOrderList extends StatelessWidget {
           case "Instalação":
             iconType = Icons.add_business_outlined;
             break;
-          case "Desistalação":
+          case "Desinstalação":
             iconType = Icons.remove;
             break;
           case "Suprimentos":
@@ -50,6 +58,8 @@ class ServiceOrderList extends StatelessWidget {
           serviceOrder: serviceOrder,
           iconType: iconType,
           typeOrder: typeOrder,
+          id: serviceOrders[index].id,
+          deletedFunction: deleteServiceOrder,
         );
       },
     );
