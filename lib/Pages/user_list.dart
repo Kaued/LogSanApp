@@ -49,7 +49,10 @@ class _UserListState extends State<UserList> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Navigator.of(context).pushNamed("/user-form"),
+        onPressed: () => Navigator.of(context).pushNamed("/user-form",
+            arguments: FormArguments<Person>(
+              isAddMode: true,
+            )),
         mini: true,
       ),
       body: StreamBuilder<QuerySnapshot<Person>>(
@@ -80,9 +83,15 @@ class _UserListState extends State<UserList> {
                       background: Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         alignment: Alignment.centerRight,
-                        child: Icon(Icons.delete),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
                         color: Colors.red,
                       ),
+                      onDismissed: (_) {
+                        controller.delete(users[index].id);
+                      },
                       child: Column(
                         children: [
                           Padding(
@@ -91,7 +100,11 @@ class _UserListState extends State<UserList> {
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushNamed("/user-form",
-                                    arguments: FormArguments<Person>(isAddMode: false, values: users[index].data(), ));
+                                    arguments: FormArguments<Person>(
+                                      isAddMode: false,
+                                      values: users[index].data(),
+                                      id: users[index].id,
+                                    ));
                               },
                               child: ListTile(
                                 title: Text(users[index].data().name),

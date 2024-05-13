@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
@@ -14,6 +15,12 @@ class UserForm extends StatefulWidget {
 }
 
 class _UserFormState extends State<UserForm> {
+  bool _checkConfiguration() => true;
+  FormArguments<Person?>? arguments;
+  Person? user;
+
+  final UserController _controller = UserController.instance;
+
   // Key do formulário
   final formKey = GlobalKey<FormState>();
 
@@ -22,14 +29,66 @@ class _UserFormState extends State<UserForm> {
   final email = TextEditingController();
   final senha = TextEditingController();
   final tipoUsuario = TextEditingController();
+  bool isAdmin = true;
+
+  final Map<String, bool> typeUser = {
+    "Administrador": true,
+    "Comum": false,
+  };
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_checkConfiguration()) {
+        setState(() {
+          arguments = ModalRoute.of(context)?.settings.arguments
+              as FormArguments<Person?>?;
+          if (arguments != null &&
+              !arguments!.isAddMode &&
+              arguments!.values != null) {
+            user = arguments!.values!;
+            nome.text = user!.name;
+            email.text = user!.email;
+          }
+        });
+      }
+    });
+  }
+
+  void onSubmit() async {
+    if (formKey.currentState!.validate()) {
+      final emailText = email.text;
+      final nomeText = nome.text;
+
+      if (arguments == null || arguments!.isAddMode) {
+        final senhaText = senha.text;
+        try {
+          await _controller.create(
+              emailText, senhaText, nomeText, isAdmin, false);
+        } catch (error) {}
+
+        return;
+      }
+
+      try {
+        await _controller.update(arguments!.id!,
+            email: emailText, name: nomeText, isAdmin: isAdmin);
+      } catch (e) {}
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Regex do email - validação
     final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    final arguments = ModalRoute.of(context)?.settings.arguments as FormArguments<Person>;
-    
     return Scaffold(
       appBar: AppBar(
         actions: [],
@@ -80,39 +139,60 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
+                arguments == null || arguments!.isAddMode
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: TextFormField(
+                          controller: senha,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: "Senha",
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value!.isEmpty) {
+                              return 'Por favor, insira uma senha';
+                            }
+                            if (value.length < 8) {
+                              return 'Por favor, insira uma senha válida';
+                            }
+                            return null;
+                          },
+                        ),
+                      )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
-                  child: TextFormField(
-                    controller: senha,
-                    decoration: InputDecoration(
-                      labelText: "Senha",
-                      border: OutlineInputBorder(),
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButtonFormField(
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Por favor, insira o tipo de usuário';
+                          }
+                          return null;
+                        },
+                        value: user == null
+                            ? typeUser.values.first
+                            : user!.isAdmin,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Tipo de Ordem de Serviço",
+                        ),
+                        items: typeUser.entries.map<DropdownMenuItem>((value) {
+                          return DropdownMenuItem(
+                            child: Text(value.key),
+                            value: value.value,
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            isAdmin = value;
+                          });
+                        },
+                      ),
                     ),
-                    validator: (value) {
-                      if (value == null || value!.isEmpty) {
-                        return 'Por favor, insira uma senha';
-                      }
-                      if (value.length < 8) {
-                        return 'Por favor, insira uma senha válida';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: TextFormField(
-                    controller: tipoUsuario,
-                    decoration: InputDecoration(
-                      labelText: "Tipo de usuário",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value!.isEmpty) {
-                        return 'Por favor, insira o tipo de usuário';
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 Container(
@@ -120,15 +200,7 @@ class _UserFormState extends State<UserForm> {
                   width: double.infinity,
                   child: ElevatedButton(
                     child: Text("Cadastrar"),
-                    onPressed: () {
-                      // Valida o formulário quando o botão é pressionado.
-                      if (formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Enviando dados')),
-                        );
-                        // Aqui você pode enviar os dados do formulário para onde quer que precise.
-                      }
-                    },
+                    onPressed: onSubmit,
                   ),
                 ),
               ],
