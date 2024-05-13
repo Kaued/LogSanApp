@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,8 +12,40 @@ class _LoginState extends State<Login> {
   final txtEmail = TextEditingController();
   final txtPassword = TextEditingController();
   bool _obscureText = true;
+  final authController = AuthController.instance;
 
-  void _signIn(BuildContext context) async {}
+  Future<void> _login(context) async {
+    try {
+      // var userData = await firestore
+      //     .collection("usersRoles")
+      //     .where('__name__', isEqualTo: user!.uid)
+      //     .get();
+
+      // bool isAdmin = userData.docs.first['isAdmin'];
+
+      // String route = '/home';
+      // if (isAdmin) {
+      //   route = '/home';
+      // }
+      var isSuccessLogin = await authController.login(txtEmail.text, txtPassword.text);
+
+      if (isSuccessLogin) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +124,8 @@ class _LoginState extends State<Login> {
                         });
                       },
                       icon: Icon(
-                        _obscureText
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: Colors.black,                        
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.black,
                       ),
                     ),
                     // apply padding to the right of the button
@@ -112,8 +143,8 @@ class _LoginState extends State<Login> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(17),
-                          backgroundColor:
-                              const Color.fromRGBO(14, 83, 255, 1), // 99, 140, 244, 1
+                          backgroundColor: const Color.fromRGBO(
+                              14, 83, 255, 1), // 99, 140, 244, 1
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -126,7 +157,7 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () => _signIn(context),
+                        onPressed: () => _login(context),
                       ),
                     ),
                   ],
