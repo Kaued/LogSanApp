@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
-import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
 class User {
@@ -44,16 +43,16 @@ class _UserListState extends State<UserList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [],
-        title: Text("Listar Usuários"),
+        actions: const [],
+        title: const Text("Listar Usuários"),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
         onPressed: () => Navigator.of(context).pushNamed("/user-form",
             arguments: FormArguments<Person>(
               isAddMode: true,
             )),
         mini: true,
+        child: const Icon(Icons.add),
       ),
       body: StreamBuilder<QuerySnapshot<Person>>(
           stream: streamUser,
@@ -81,13 +80,13 @@ class _UserListState extends State<UserList> {
                     Dismissible(
                       key: Key(users[index].id.toString()),
                       background: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         alignment: Alignment.centerRight,
-                        child: Icon(
+                        color: Colors.red,
+                        child: const Icon(
                           Icons.delete,
                           color: Colors.white,
                         ),
-                        color: Colors.red,
                       ),
                       onDismissed: (_) {
                         controller.delete(users[index].id);
@@ -95,7 +94,7 @@ class _UserListState extends State<UserList> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 0, horizontal: 0),
                             child: GestureDetector(
                               onTap: () {
@@ -112,7 +111,8 @@ class _UserListState extends State<UserList> {
                                   users[index].data().isAdmin
                                       ? 'admin'
                                       : 'comum',
-                                  style: TextStyle(fontWeight: FontWeight.w300),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w300),
                                 ),
                               ),
                             ),
@@ -120,7 +120,7 @@ class _UserListState extends State<UserList> {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       height: 0,
                     )
                   ],

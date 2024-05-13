@@ -18,8 +18,8 @@ class _BottomBarState extends State<BottomBar> {
   var pages = {
     0: "",
     1: AppRoutes.userList,
-    2: AppRoutes.userForm,
-    3: "",
+    2: "",
+    3: AppRoutes.listServiceOrder,
     4: "",
   };
 
@@ -60,7 +60,7 @@ class _BottomBarState extends State<BottomBar> {
         ),
         BottomNavigationBarItem(
           icon: Icon(
-            Icons.bus_alert,
+            Icons.text_snippet_rounded,
           ),
           label: "",
         ),

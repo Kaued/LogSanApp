@@ -1,22 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
-import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
-import 'package:logsan_app/Utils/app_routes.dart';
 
 class UserForm extends StatefulWidget {
-  const UserForm({super.key});
+  const UserForm({super.key, this.arguments});
 
+  final FormArguments<Person?>? arguments;
   @override
   State<UserForm> createState() => _UserFormState();
 }
 
 class _UserFormState extends State<UserForm> {
   bool _checkConfiguration() => true;
-  FormArguments<Person?>? arguments;
   Person? user;
 
   final UserController _controller = UserController.instance;
@@ -41,19 +37,13 @@ class _UserFormState extends State<UserForm> {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        setState(() {
-          arguments = ModalRoute.of(context)?.settings.arguments
-              as FormArguments<Person?>?;
-          if (arguments != null &&
-              !arguments!.isAddMode &&
-              arguments!.values != null) {
-            user = arguments!.values!;
-            nome.text = user!.name;
-            email.text = user!.email;
-          }
-        });
+    setState(() {
+      if (widget.arguments != null &&
+          !widget.arguments!.isAddMode &&
+          widget.arguments!.values != null) {
+        user = widget.arguments!.values!;
+        nome.text = user!.name;
+        email.text = user!.email;
       }
     });
   }
@@ -63,7 +53,7 @@ class _UserFormState extends State<UserForm> {
       final emailText = email.text;
       final nomeText = nome.text;
 
-      if (arguments == null || arguments!.isAddMode) {
+      if (widget.arguments == null || widget.arguments!.isAddMode) {
         final senhaText = senha.text;
         try {
           await _controller.create(
@@ -74,7 +64,7 @@ class _UserFormState extends State<UserForm> {
       }
 
       try {
-        await _controller.update(arguments!.id!,
+        await _controller.update(widget.arguments!.id!,
             email: emailText, name: nomeText, isAdmin: isAdmin);
       } catch (e) {}
 
@@ -91,15 +81,15 @@ class _UserFormState extends State<UserForm> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [],
-        title: Text(
+        actions: const [],
+        title: const Text(
           'Adicionar usuário',
         ),
       ),
       body: Form(
         key: formKey,
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -108,12 +98,12 @@ class _UserFormState extends State<UserForm> {
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: TextFormField(
                     controller: nome,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Nome",
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Por favor, insira um nome';
                       }
                       return null;
@@ -124,12 +114,12 @@ class _UserFormState extends State<UserForm> {
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: TextFormField(
                     controller: email,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "E-mail",
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Por favor, insira um e-mail';
                       }
                       if (!regex.hasMatch(value)) {
@@ -139,18 +129,18 @@ class _UserFormState extends State<UserForm> {
                     },
                   ),
                 ),
-                arguments == null || arguments!.isAddMode
+                widget.arguments == null || widget.arguments!.isAddMode
                     ? Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: TextFormField(
                           controller: senha,
                           obscureText: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Senha",
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
-                            if (value == null || value!.isEmpty) {
+                            if (value == null || value.isEmpty) {
                               return 'Por favor, insira uma senha';
                             }
                             if (value.length < 8) {
@@ -182,8 +172,8 @@ class _UserFormState extends State<UserForm> {
                         ),
                         items: typeUser.entries.map<DropdownMenuItem>((value) {
                           return DropdownMenuItem(
-                            child: Text(value.key),
                             value: value.value,
+                            child: Text(value.key),
                           );
                         }).toList(),
                         onChanged: (value) {
@@ -195,12 +185,12 @@ class _UserFormState extends State<UserForm> {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(
-                    child: Text("Cadastrar"),
                     onPressed: onSubmit,
+                    child: const Text("Cadastrar"),
                   ),
                 ),
               ],

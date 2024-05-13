@@ -78,7 +78,7 @@ class UserRepository {
 
   Stream<QuerySnapshot<Person>> listUsers({String? field, String value = ""}) {
     if (field != null && field.isNotEmpty) {
-      return _userCollection.orderBy(field).startAt([value]).snapshots();
+      return _userCollection.where("isDisabled", isEqualTo: false).snapshots();
     }
 
     return _userCollection.snapshots();

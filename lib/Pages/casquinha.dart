@@ -1,7 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Models/person.dart';
+import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
+import 'package:logsan_app/Pages/list_service_order.dart';
+import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
+import 'package:logsan_app/Repositories/auth_repository.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
 const Color searchBackground = Color(0xFFFAFAFA);
@@ -45,16 +52,38 @@ Widget _buildHomeScreen(context) {
         ),
       ),
     ),
-    body: Stack(
+    body: const Stack(
       children: [Text('home')],
     ),
   );
 }
 
-class Casquinha extends StatelessWidget {
-  Casquinha({super.key});
+class Casquinha extends StatefulWidget {
+  const Casquinha({super.key});
 
+  @override
+  State<Casquinha> createState() => _CasquinhaState();
+}
+
+class _CasquinhaState extends State<Casquinha> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+  final AuthRepository authRepository = AuthRepository.instance;
+  bool _checkConfiguration() => true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_checkConfiguration()) {
+        if (!authRepository.isAuthenticated()) {
+          print(FirebaseAuth.instance.currentUser);
+          Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +94,8 @@ class Casquinha extends StatelessWidget {
           initialRoute: AppRoutes.login,
           onGenerateRoute: (routeSetting) => PageRouteBuilder(
             pageBuilder: (ctx, ani, ani1) {
-              return getCurrentPage(routeSetting.name!, context);
+              return getCurrentPage(
+                  routeSetting.name!, context, routeSetting.arguments);
             },
             transitionDuration: const Duration(seconds: 0),
           ),
@@ -82,14 +112,23 @@ class Casquinha extends StatelessWidget {
     );
   }
 
-  Widget getCurrentPage(String currentRoute, BuildContext context) {
+  Widget getCurrentPage(
+      String currentRoute, BuildContext context, Object? arguments) {
     switch (currentRoute) {
       case AppRoutes.home:
         return _buildHomeScreen(context);
       case AppRoutes.userList:
-        return UserList();
+        return const UserList();
       case AppRoutes.userForm:
-        return UserForm();
+        return UserForm(
+          arguments: arguments as FormArguments<Person?>?,
+        );
+      case AppRoutes.listServiceOrder:
+        return const ListServiceOrder();
+      case AppRoutes.serviceOrderForm:
+        return ServiceOrderForm(
+          arguments: arguments as FormArguments<ServiceOrder?>?,
+        );
       default:
         return _buildHomeScreen(context);
     }

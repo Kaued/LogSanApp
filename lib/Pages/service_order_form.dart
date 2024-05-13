@@ -15,7 +15,8 @@ import '../Components/ServiceOrders/address_modal.dart';
 import '../Components/ServiceOrders/service_order_form_input.dart';
 
 class ServiceOrderForm extends StatefulWidget {
-  const ServiceOrderForm({super.key});
+  const ServiceOrderForm({super.key, this.arguments});
+  final FormArguments<ServiceOrder?>? arguments;
 
   @override
   State<ServiceOrderForm> createState() => _ServiceOrderFormState();
@@ -24,7 +25,6 @@ class ServiceOrderForm extends StatefulWidget {
 class _ServiceOrderFormState extends State<ServiceOrderForm> {
   final ServiceOrderController controller = ServiceOrderController.instance;
   final dateFormatBr = DateFormat('dd/MM/yyyy HH:mm');
-  FormArguments<ServiceOrder?>? arguments;
   bool _checkConfiguration() => true;
 
   List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
@@ -58,17 +58,11 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        setState(() {
-          arguments = ModalRoute.of(context)?.settings.arguments
-              as FormArguments<ServiceOrder?>?;
-          if (arguments != null &&
-              !arguments!.isAddMode &&
-              arguments!.values != null) {
-            serviceOrder = arguments!.values!;
-          }
-        });
+    setState(() {
+      if (widget.arguments != null &&
+          !widget.arguments!.isAddMode &&
+          widget.arguments!.values != null) {
+        serviceOrder = widget.arguments!.values!;
       }
     });
 
@@ -128,7 +122,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
       typeOrders = response;
     });
 
-    if (arguments != null && !arguments!.isAddMode) {
+    if (widget.arguments != null && !widget.arguments!.isAddMode) {
       setTypeOrder(serviceOrder.typeOrderId);
     }
 
@@ -151,7 +145,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
           loading = true;
         });
         try {
-          if (arguments == null || arguments!.isAddMode) {
+          if (widget.arguments == null || widget.arguments!.isAddMode) {
             await controller.createServiceOrder(
               serviceOrder: serviceOrder,
               needInstallEquipment: needInstallEquipment,
@@ -162,7 +156,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
           } else {
             await controller.updateServiceOrder(
               serviceOrder: serviceOrder,
-              id: arguments!.id!,
+              id: widget.arguments!.id!,
               needInstallEquipment: needInstallEquipment,
               needRemoveEquipment: needRemoveEquipment,
               installEquipment: installEquipment,
@@ -289,7 +283,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          arguments == null || arguments!.isAddMode
+          widget.arguments == null || widget.arguments!.isAddMode
               ? "Nova Ordem de Serviço"
               : "Editar Ordem de Serviço",
         ),

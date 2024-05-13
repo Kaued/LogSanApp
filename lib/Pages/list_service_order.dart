@@ -138,7 +138,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
         onPressed: () {
           Navigator.of(context).pushNamed(
             AppRoutes.serviceOrderForm,
-            arguments: FormArguments(isAddMode: true),
+            arguments: FormArguments<ServiceOrder?>(isAddMode: true),
           );
         },
         child: const Icon(Icons.add),

@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
       var isSuccessLogin = await authController.login(txtEmail.text, txtPassword.text);
 
       if (isSuccessLogin) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/casquinha');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

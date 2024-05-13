@@ -31,4 +31,8 @@ class AuthRepository {
 
     return true;
   }
+
+  bool isAuthenticated() {
+    return FirebaseAuth.instance.currentUser != null;
+  }
 }
