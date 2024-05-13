@@ -15,7 +15,6 @@ class UserRepository {
   Future<bool> update(
     String id, {
     String? email,
-    String? password,
     String? name,
     bool? isAdmin,
     bool? isDisabled,
@@ -24,10 +23,6 @@ class UserRepository {
       await firestore.collection('users').doc(id).update({
         "email": email,
       });
-    }
-
-    if (password != null) {
-      // await FirebaseAuth.instance.currentUser!.updatePassword(password);
     }
 
     if (name != null) {
@@ -39,12 +34,6 @@ class UserRepository {
     if (isAdmin != null) {
       await firestore.collection('users').doc(id).update({
         "isAdmin": isAdmin,
-      });
-    }
-
-    if (isDisabled != null) {
-      await firestore.collection('users').doc(id).update({
-        "isDisabled": isDisabled,
       });
     }
 

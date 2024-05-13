@@ -49,20 +49,16 @@ class UserController {
 
   Future<bool> update(
     String id, {
-    String? email,
-    String? password,
-    String? name,
-    bool? isAdmin,
-    bool? isDisabled,
+    required String email,
+    required String name,
+    required bool isAdmin,
   }) async {
     try {
       await _userRepository.update(
         id,
         email: email,
-        password: password,
         name: name,
         isAdmin: isAdmin,
-        isDisabled: isDisabled,
       );
     } catch (e) {
       throw Exception(e);
