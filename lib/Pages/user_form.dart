@@ -58,6 +58,8 @@ class _UserFormState extends State<UserForm> {
         try {
           await _controller.create(
               emailText, senhaText, nomeText, isAdmin, false);
+
+          Navigator.of(context).pop();
         } catch (error) {}
 
         return;
@@ -66,11 +68,9 @@ class _UserFormState extends State<UserForm> {
       try {
         await _controller.update(widget.arguments!.id!,
             email: emailText, name: nomeText, isAdmin: isAdmin);
-      } catch (e) {}
 
-      if (context.mounted) {
         Navigator.of(context).pop();
-      }
+      } catch (e) {}
     }
   }
 
