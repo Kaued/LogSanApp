@@ -56,7 +56,75 @@ class EquipmentsForm extends StatelessWidget {
             ],
           ),
           needInstallEquipment
-              ? EquipmentInput(installEquipment: installEquipment, onShowModalInstallEquipment: onShowModalInstallEquipment, theme: theme)
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: installEquipment == null
+                      ? Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            ElevatedButton(
+                              onPressed: () => onShowModalInstallEquipment(),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 4,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.add_circle,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Text(
+                                        "Adicionar Equipamento",
+                                        style: theme.textTheme.titleMedium!
+                                            .copyWith(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        )
+                      : GestureDetector(
+                          onTap: () => onShowModalInstallEquipment(),
+                          child: Card(
+                            elevation: 3,
+                            color: Colors.grey[200],
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 4,
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  "${installEquipment!.serial} - ${installEquipment!.model}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                leading: Icon(
+                                  Icons.install_mobile,
+                                  color: theme.colorScheme.primary,
+                                  size: 32,
+                                ),
+                                subtitle: Text(
+                                    "${installEquipment!.logicalNumber} |${installEquipment!.producer}"),
+                              ),
+                            ),
+                          ),
+                        ),
+                )
               : Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Card(
@@ -195,91 +263,5 @@ class EquipmentsForm extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class EquipmentInput extends StatelessWidget {
-  const EquipmentInput({
-    super.key,
-    required this.installEquipment,
-    required this.onShowModalInstallEquipment,
-    required this.theme,
-  });
-
-  final Equipment? installEquipment;
-  final Function() onShowModalInstallEquipment;
-  final ThemeData theme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: installEquipment == null
-            ? Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  ElevatedButton(
-                    onPressed: () => onShowModalInstallEquipment(),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 4,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.add_circle,
-                            color: Colors.white,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              "Adicionar Equipamento",
-                              style: theme.textTheme.titleMedium!
-                                  .copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              )
-            : GestureDetector(
-                onTap: () => onShowModalInstallEquipment(),
-                child: Card(
-                  elevation: 3,
-                  color: Colors.grey[200],
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 4,
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        "${installEquipment!.serial} - ${installEquipment!.model}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      leading: Icon(
-                        Icons.install_mobile,
-                        color: theme.colorScheme.primary,
-                        size: 32,
-                      ),
-                      subtitle: Text(
-                          "${installEquipment!.logicalNumber} |${installEquipment!.producer}"),
-                    ),
-                  ),
-                ),
-              ),
-      );
   }
 }
