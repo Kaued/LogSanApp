@@ -44,7 +44,7 @@ class ServiceOrderRepository {
 
       return await _serviceOrderCollection
           .doc(id)
-          .update({...serviceOrder.toJson(), "deleted": true});
+          .update(serviceOrder.toJson());
     }
 
     throw Exception("Ordem de serviço não encontrada");
