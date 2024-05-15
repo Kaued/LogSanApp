@@ -13,6 +13,7 @@ class ServiceOrder {
     required this.address,
     this.removeEquipment,
     this.installEquipment,
+    this.deleted = false,
   });
 
   ServiceOrder.fromJson(Map<String, Object?> json)
@@ -47,6 +48,7 @@ class ServiceOrder {
   Timestamp maxDate;
   String? installEquipment;
   String? removeEquipment;
+  bool deleted;
 
   Map<String, Object?> toJson() {
     return {
@@ -66,6 +68,7 @@ class ServiceOrder {
       "street": address.street,
       "installEquipment": installEquipment,
       "removeEquipment": removeEquipment,
+      "deleted": deleted,
     };
   }
 }

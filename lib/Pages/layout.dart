@@ -58,14 +58,14 @@ Widget _buildHomeScreen(context) {
   );
 }
 
-class Casquinha extends StatefulWidget {
-  const Casquinha({super.key});
+class Layout extends StatefulWidget {
+  const Layout({super.key});
 
   @override
-  State<Casquinha> createState() => _CasquinhaState();
+  State<Layout> createState() => _LayoutState();
 }
 
-class _CasquinhaState extends State<Casquinha> {
+class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   final AuthRepository authRepository = AuthRepository.instance;
   bool _checkConfiguration() => true;

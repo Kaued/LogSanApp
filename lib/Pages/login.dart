@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
+import 'package:logsan_app/Utils/app_routes.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -27,10 +28,11 @@ class _LoginState extends State<Login> {
       // if (isAdmin) {
       //   route = '/home';
       // }
-      var isSuccessLogin = await authController.login(txtEmail.text, txtPassword.text);
+      var isSuccessLogin =
+          await authController.login(txtEmail.text, txtPassword.text);
 
       if (isSuccessLogin) {
-        Navigator.of(context).pushReplacementNamed('/casquinha');
+        Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
