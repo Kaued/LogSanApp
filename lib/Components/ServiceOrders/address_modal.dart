@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logsan_app/Components/loading_positioned.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
 import 'package:logsan_app/Utils/alerts.dart';
@@ -177,14 +178,9 @@ class _AddressModalState extends State<AddressModal> {
                 color: Colors.white,
                 child: Stack(
                   children: [
-                    loading
-                        ? Container(
-                            color: Colors.black38,
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : Container(),
+                    LoadingPositioned(
+                      loading: loading,
+                    ),
                     SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

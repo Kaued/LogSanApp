@@ -47,6 +47,7 @@ class ServiceOrder {
   Timestamp maxDate;
   String? installEquipment;
   String? removeEquipment;
+  final bool deleted = false;
 
   Map<String, Object?> toJson() {
     return {
@@ -66,6 +67,7 @@ class ServiceOrder {
       "street": address.street,
       "installEquipment": installEquipment,
       "removeEquipment": removeEquipment,
+      "deleted": deleted,
     };
   }
 }
