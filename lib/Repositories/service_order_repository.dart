@@ -36,9 +36,17 @@ class ServiceOrderRepository {
   }
 
   Future<void> deleteServiceOrder(String id) async {
-    final serviceOrder = await _serviceOrderCollection.doc(id).get();
-    return await _serviceOrderCollection
-        .doc(id)
-        .update({...serviceOrder.data()!.toJson(), "deleted": true});
+    final serviceOrderResponse = await _serviceOrderCollection.doc(id).get();
+    final serviceOrder = serviceOrderResponse.data();
+
+    if (serviceOrder != null) {
+      serviceOrder.deleted = true;
+
+      return await _serviceOrderCollection
+          .doc(id)
+          .update({...serviceOrder.toJson(), "deleted": true});
+    }
+
+    throw Exception("Ordem de serviço não encontrada");
   }
 }
