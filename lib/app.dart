@@ -16,7 +16,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: false,
         colorScheme: ThemeData.light().colorScheme.copyWith(
-              primary: const Color(0xff638CF4),
+                primary: const Color(0xff638CF4),
               secondary: const Color(0xffFFAB00),
             ),
         textTheme: ThemeData.light().textTheme.copyWith(
