@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
+import 'package:logsan_app/Pages/home.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
@@ -68,6 +69,7 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   final AuthRepository authRepository = AuthRepository.instance;
+  String initialPage = AppRoutes.login;
   bool _checkConfiguration() => true;
 
   @override
@@ -75,13 +77,18 @@ class _LayoutState extends State<Layout> {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        if (!authRepository.isAuthenticated()) {
-          print(FirebaseAuth.instance.currentUser);
+    if (!authRepository.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
         }
-      }
+      });
+
+      return;
+    }
+
+    setState(() {
+      initialPage = AppRoutes.home;
     });
   }
 
@@ -91,7 +98,7 @@ class _LayoutState extends State<Layout> {
       child: Scaffold(
         body: Navigator(
           key: navigatorKey,
-          initialRoute: AppRoutes.login,
+          initialRoute: initialPage,
           onGenerateRoute: (routeSetting) => PageRouteBuilder(
             pageBuilder: (ctx, ani, ani1) {
               return getCurrentPage(
