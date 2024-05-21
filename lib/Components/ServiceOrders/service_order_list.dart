@@ -27,41 +27,67 @@ class ServiceOrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: serviceOrders.length,
-      itemBuilder: (context, index) {
-        final serviceOrder = serviceOrders[index].data();
-        final typeOrder = typeOrders
-            .where((doc) => doc.id == serviceOrders[index].data().typeOrderId)
-            .first
-            .data();
+    final theme = Theme.of(context);
 
-        IconData iconType = Icons.precision_manufacturing;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            Colors.white,
+          ],
+          begin: const FractionalOffset(0, 0),
+          end: const FractionalOffset(0, 1),
+          stops: const [0, .65],
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 16,
+        horizontal: 8,
+      ),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: ListView.builder(
+            itemCount: serviceOrders.length,
+            itemBuilder: (context, index) {
+              final serviceOrder = serviceOrders[index].data();
+              final typeOrder = typeOrders
+                  .where((doc) =>
+                      doc.id == serviceOrders[index].data().typeOrderId)
+                  .first
+                  .data();
 
-        switch (typeOrder.name) {
-          case "Troca":
-            iconType = Icons.change_circle_outlined;
-            break;
-          case "Instalação":
-            iconType = Icons.add_business_outlined;
-            break;
-          case "Desinstalação":
-            iconType = Icons.remove;
-            break;
-          case "Suprimentos":
-            iconType = Icons.delivery_dining;
-            break;
-          default:
-        }
+              IconData iconType = Icons.precision_manufacturing;
 
-        return ServiceOrderItem(
-          serviceOrder: serviceOrder,
-          iconType: iconType,
-          typeOrder: typeOrder,
-          id: serviceOrders[index].id,
-          deletedFunction: deleteServiceOrder,
-        );
-      },
+              switch (typeOrder.name) {
+                case "Troca":
+                  iconType = Icons.change_circle_outlined;
+                  break;
+                case "Instalação":
+                  iconType = Icons.add_business_outlined;
+                  break;
+                case "Desinstalação":
+                  iconType = Icons.remove;
+                  break;
+                case "Suprimentos":
+                  iconType = Icons.delivery_dining;
+                  break;
+                default:
+              }
+
+              return ServiceOrderItem(
+                serviceOrder: serviceOrder,
+                iconType: iconType,
+                typeOrder: typeOrder,
+                id: serviceOrders[index].id,
+                deletedFunction: deleteServiceOrder,
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

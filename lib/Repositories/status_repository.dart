@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/status.dart';
 
 class StatusRepository {

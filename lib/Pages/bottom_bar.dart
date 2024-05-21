@@ -25,6 +25,7 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+  
     return BottomNavigationBar(
       fixedColor: Colors.blue,
       unselectedItemColor: Colors.grey,

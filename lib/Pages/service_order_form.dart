@@ -16,6 +16,7 @@ import '../Components/ServiceOrders/address_input.dart';
 import '../Components/ServiceOrders/address_modal.dart';
 import '../Components/ServiceOrders/equipments_form.dart';
 import '../Components/ServiceOrders/service_order_form_input.dart';
+import '../Components/chip_form.dart';
 
 class ServiceOrderForm extends StatefulWidget {
   const ServiceOrderForm({super.key, this.arguments});
@@ -139,6 +140,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
     final serviceOrderForm = GlobalKey<FormState>();
     final placeForm = GlobalKey<FormState>();
     final screen = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     void onSubmit() async {
       if (serviceOrderForm.currentState!.validate() &&
@@ -297,13 +299,32 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.arguments == null || widget.arguments!.isAddMode
-              ? "Nova Ordem de Serviço"
-              : "Editar Ordem de Serviço",
+        elevation: 0,
+        title: Row(
+          children: [
+            Text(
+              widget.arguments == null || widget.arguments!.isAddMode
+                  ? "Ordem de Serviço"
+                  : "Ordem de Serviço",
+              style: theme.textTheme.titleMedium!.copyWith(
+                color: Colors.white,
+              ),
+            ),
+            ChipForm(arguments: widget.arguments)
+          ],
         ),
         actions: [
-          IconButton(onPressed: onSubmit, icon: const Icon(Icons.save))
+          ElevatedButton(
+            onPressed: onSubmit,
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+            ),
+            child: Text(
+              widget.arguments == null || widget.arguments!.isAddMode
+                  ? "Cadastrar"
+                  : "Editar",
+            ),
+          ),
         ],
       ),
       body: SizedBox(
@@ -312,13 +333,26 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
         child: Stack(
           children: [
             SingleChildScrollView(
-              child: Padding(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primary,
+                      Colors.white,
+                    ],
+                    begin: const FractionalOffset(0, 0),
+                    end: const FractionalOffset(0, 1),
+                    stops: const [0.0, .65],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
                 padding: const EdgeInsets.symmetric(
                   vertical: 20,
                   horizontal: 10,
                 ),
                 child: ExpansionPanelList(
                   animationDuration: Durations.medium4,
+                  elevation: 4,
                   expansionCallback: (panelIndex, isExpanded) {
                     serviceOrderForm.currentState!.save();
                     placeForm.currentState!.save();
@@ -347,19 +381,31 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                             vertical: 20,
                             horizontal: 15,
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.article,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  "Dados da Ordem de Serviço",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Dados da Ordem de Serviço",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Informações sobre a serviço a ser prestado.",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -453,19 +499,31 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                             vertical: 20,
                             horizontal: 15,
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.apartment,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  "Dados do Estabelecimento",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Dados do Estabelecimento",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Informações sobre o cliente do serviço.",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -560,19 +618,31 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                             vertical: 20,
                             horizontal: 15,
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.ad_units,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  "Equipamentos",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Equipamentos",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Equipamentos que serão utilizados.",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
@@ -68,20 +67,25 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   final AuthRepository authRepository = AuthRepository.instance;
+  String initialPage = AppRoutes.login;
   bool _checkConfiguration() => true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        if (!authRepository.isAuthenticated()) {
-          print(FirebaseAuth.instance.currentUser);
+    if (!authRepository.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
         }
-      }
+      });
+
+      return;
+    }
+
+    setState(() {
+      initialPage = AppRoutes.home;
     });
   }
 
@@ -91,7 +95,7 @@ class _LayoutState extends State<Layout> {
       child: Scaffold(
         body: Navigator(
           key: navigatorKey,
-          initialRoute: AppRoutes.login,
+          initialRoute: initialPage,
           onGenerateRoute: (routeSetting) => PageRouteBuilder(
             pageBuilder: (ctx, ani, ani1) {
               return getCurrentPage(
