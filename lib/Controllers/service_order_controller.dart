@@ -31,6 +31,7 @@ class ServiceOrderController {
         field: field,
         value: value,
       );
+
       return orders;
     }
 

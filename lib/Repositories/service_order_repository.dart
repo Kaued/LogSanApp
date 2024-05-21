@@ -17,8 +17,9 @@ class ServiceOrderRepository {
       {String? field, String value = ""}) {
     if (field != null && field.isNotEmpty) {
       return _serviceOrderCollection
+          .where("deleted", isEqualTo: false)
           .orderBy(field)
-          .startAt([value]).snapshots();
+          .startAt([value]).endAt(["$value\uf8ff"]).snapshots();
     }
 
     return _serviceOrderCollection

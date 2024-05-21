@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
-import 'package:logsan_app/Pages/home.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
@@ -74,7 +72,6 @@ class _LayoutState extends State<Layout> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     if (!authRepository.isAuthenticated()) {

@@ -155,14 +155,54 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done &&
               snapshot.connectionState != ConnectionState.active) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    Colors.white,
+                  ],
+                  begin: const FractionalOffset(0, 0),
+                  end: const FractionalOffset(0, 1),
+                  stops: const [0, .65],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 8,
+              ),
+              child: const Card(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
             );
           }
 
           if (!snapshot.hasData) {
-            return const Center(
-              child: Text("Não há Ordens de Serviço"),
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    Colors.white,
+                  ],
+                  begin: const FractionalOffset(0, 0),
+                  end: const FractionalOffset(0, 1),
+                  stops: const [0, .65],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 8,
+              ),
+              child: const Card(
+                child: Center(
+                  child: Text("Não há Ordens de Serviço"),
+                ),
+              ),
             );
           }
 
