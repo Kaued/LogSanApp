@@ -133,6 +133,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
             },
           )
         ],
+        automaticallyImplyLeading: false,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

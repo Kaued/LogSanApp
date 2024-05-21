@@ -25,7 +25,6 @@ class _UserListState extends State<UserList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     list();
@@ -43,14 +42,16 @@ class _UserListState extends State<UserList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [],
         title: const Text("Listar Usuários"),
+        automaticallyImplyLeading: false,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed("/user-form",
-            arguments: FormArguments<Person>(
-              isAddMode: true,
-            )),
+        onPressed: () => Navigator.of(context).pushNamed(
+          "/user-form",
+          arguments: FormArguments<Person>(
+            isAddMode: true,
+          ),
+        ),
         mini: true,
         child: const Icon(Icons.add),
       ),
@@ -95,15 +96,19 @@ class _UserListState extends State<UserList> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 0),
+                              vertical: 0,
+                              horizontal: 0,
+                            ),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pushNamed("/user-form",
-                                    arguments: FormArguments<Person>(
-                                      isAddMode: false,
-                                      values: users[index].data(),
-                                      id: users[index].id,
-                                    ));
+                                Navigator.of(context).pushNamed(
+                                  "/user-form",
+                                  arguments: FormArguments<Person>(
+                                    isAddMode: false,
+                                    values: users[index].data(),
+                                    id: users[index].id,
+                                  ),
+                                );
                               },
                               child: ListTile(
                                 title: Text(users[index].data().name),
@@ -112,7 +117,8 @@ class _UserListState extends State<UserList> {
                                       ? 'admin'
                                       : 'comum',
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.w300),
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
                               ),
                             ),
@@ -120,9 +126,7 @@ class _UserListState extends State<UserList> {
                         ],
                       ),
                     ),
-                    const Divider(
-                      height: 0,
-                    )
+                    const Divider(height: 0)
                   ],
                 );
               },

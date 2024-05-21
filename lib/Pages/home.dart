@@ -36,6 +36,7 @@ class _HomeState extends State<Home> {
             icon: const Icon(Icons.logout),
           ),
         ],
+        automaticallyImplyLeading: false,
       ),
       body: IconButton(
         onPressed: () => _testAction(),

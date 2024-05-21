@@ -14,17 +14,10 @@ class UserRepository {
 
   Future<bool> update(
     String id, {
-    String? email,
     String? name,
     bool? isAdmin,
     bool? isDisabled,
   }) async {
-    if (email != null) {
-      await firestore.collection('users').doc(id).update({
-        "email": email,
-      });
-    }
-
     if (name != null) {
       await firestore.collection('users').doc(id).update({
         "name": name,
@@ -76,12 +69,8 @@ class UserRepository {
         toFirestore: (person, options) => person.toJson(),
       );
 
-  Stream<QuerySnapshot<Person>> listUsers({String? field, String value = ""}) {
-    if (field != null && field.isNotEmpty) {
+  Stream<QuerySnapshot<Person>> listUsers() {
       return _userCollection.where("isDisabled", isEqualTo: false).snapshots();
-    }
-
-    return _userCollection.snapshots();
   }
 
   Future<Person> getById(String id) async {

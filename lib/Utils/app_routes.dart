@@ -6,4 +6,5 @@ class AppRoutes {
   static const String layout = "/";
   static const String listServiceOrder = "/service-order";
   static const String serviceOrderForm = "/service-order/form";
+  static const String myAccont = "/my-account";
 }

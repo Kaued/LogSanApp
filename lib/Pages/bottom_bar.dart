@@ -16,11 +16,11 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   var selectedPage = 0;
   var pages = {
-    0: "",
+    0: AppRoutes.home,
     1: AppRoutes.userList,
     2: "",
     3: AppRoutes.listServiceOrder,
-    4: "",
+    4: AppRoutes.myAccont,
   };
 
   @override
