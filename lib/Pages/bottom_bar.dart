@@ -18,14 +18,13 @@ class _BottomBarState extends State<BottomBar> {
   var pages = {
     0: "",
     1: AppRoutes.userList,
-    2: "",
+    2: AppRoutes.workRouteForm,
     3: AppRoutes.listServiceOrder,
     4: "",
   };
 
   @override
   Widget build(BuildContext context) {
-  
     return BottomNavigationBar(
       fixedColor: Colors.blue,
       unselectedItemColor: Colors.grey,
