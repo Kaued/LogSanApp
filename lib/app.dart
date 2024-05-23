@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logsan_app/Pages/layout.dart';
 import 'package:logsan_app/Pages/login.dart';
+import 'package:logsan_app/Repositories/auth_repository.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  App({super.key});
+  final _authRepository = AuthRepository.instance;
+
+  String defineInitialRoute() {
+    if (_authRepository.isAuthenticated()) {
+      return AppRoutes.layout;
+    }
+
+    return AppRoutes.login;
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRoutes.login,
+      initialRoute: defineInitialRoute(),
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       theme: ThemeData(

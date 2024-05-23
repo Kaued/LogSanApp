@@ -22,18 +22,25 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   final AuthRepository authRepository = AuthRepository.instance;
+  String initialPage = AppRoutes.login;
   bool _checkConfiguration() => true;
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        if (!authRepository.isAuthenticated()) {
+    if (!authRepository.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
         }
-      }
+      });
+
+      return;
+    }
+
+    setState(() {
+      initialPage = AppRoutes.home;
     });
   }
 
@@ -43,7 +50,7 @@ class _LayoutState extends State<Layout> {
       child: Scaffold(
         body: Navigator(
           key: navigatorKey,
-          initialRoute: AppRoutes.login,
+          initialRoute: initialPage,
           onGenerateRoute: (routeSetting) => PageRouteBuilder(
             pageBuilder: (ctx, ani, ani1) {
               return getCurrentPage(

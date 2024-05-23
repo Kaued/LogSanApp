@@ -6,5 +6,5 @@ import 'package:logsan_app/app.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp(options: FireBaseConfig.config);
-  runApp(const App());
+  runApp(App());
 }
