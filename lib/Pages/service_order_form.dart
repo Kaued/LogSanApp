@@ -447,7 +447,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                                     "A data de vencimento da ordem de serviço",
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return "O numero de referência deve ser preenchido";
+                                    return "A data de vencimento deve ser preenchida";
                                   }
                                   return null;
                                 },
