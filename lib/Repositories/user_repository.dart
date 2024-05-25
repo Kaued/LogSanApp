@@ -70,7 +70,7 @@ class UserRepository {
       );
 
   Stream<QuerySnapshot<Person>> listUsers() {
-      return _userCollection.where("isDisabled", isEqualTo: false).snapshots();
+    return _userCollection.where("isDisabled", isEqualTo: false).snapshots();
   }
 
   Future<Person> getById(String id) async {
@@ -83,6 +83,25 @@ class UserRepository {
       "name": user.get("name"),
       "isAdmin": user.get("isAdmin"),
       "isDisabled": user.get("isDisabled"),
+    });
+  }
+
+  Future<Person> getByUid(String uid) async {
+    var user = await firestore
+        .collection('users')
+        .where(
+          "uid",
+          isEqualTo: uid,
+        )
+        .get();
+
+    return Person.fromJson({
+      "id": user.docs.first.id,
+      "uid": user.docs.first.get("uid"),
+      "email": user.docs.first.get("email"),
+      "name": user.docs.first.get("name"),
+      "isAdmin": user.docs.first.get("isAdmin"),
+      "isDisabled": user.docs.first.get("isDisabled"),
     });
   }
 }

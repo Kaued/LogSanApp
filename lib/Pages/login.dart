@@ -17,19 +17,10 @@ class _LoginState extends State<Login> {
 
   Future<void> _login(context) async {
     try {
-      // var userData = await firestore
-      //     .collection("usersRoles")
-      //     .where('__name__', isEqualTo: user!.uid)
-      //     .get();
-
-      // bool isAdmin = userData.docs.first['isAdmin'];
-
-      // String route = '/home';
-      // if (isAdmin) {
-      //   route = '/home';
-      // }
-      var isSuccessLogin =
-          await authController.login(txtEmail.text, txtPassword.text);
+      bool isSuccessLogin = await authController.login(
+        txtEmail.text,
+        txtPassword.text,
+      );
 
       if (isSuccessLogin) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.layout);

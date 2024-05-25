@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
@@ -7,7 +8,6 @@ import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
-import 'package:logsan_app/Repositories/auth_repository.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 import 'package:logsan_app/Pages/my_account.dart';
@@ -21,7 +21,7 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-  final AuthRepository authRepository = AuthRepository.instance;
+  final authController = AuthController.instance;
   String initialPage = AppRoutes.login;
   bool _checkConfiguration() => true;
 
@@ -29,7 +29,7 @@ class _LayoutState extends State<Layout> {
   void initState() {
     super.initState();
 
-    if (!authRepository.isAuthenticated()) {
+    if (!authController.isAuthenticated() || authController.user.uid.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
@@ -42,6 +42,15 @@ class _LayoutState extends State<Layout> {
     setState(() {
       initialPage = AppRoutes.home;
     });
+  }
+
+  void logout() async {
+    bool successLogout = await authController.logout();
+
+    if (!successLogout) return;
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
   @override
@@ -72,7 +81,10 @@ class _LayoutState extends State<Layout> {
   }
 
   Widget getCurrentPage(
-      String currentRoute, BuildContext context, Object? arguments) {
+    String currentRoute,
+    BuildContext context,
+    Object? arguments,
+  ) {
     switch (currentRoute) {
       case AppRoutes.home:
         return const Home();
@@ -87,7 +99,7 @@ class _LayoutState extends State<Layout> {
           arguments: arguments as FormArguments<ServiceOrder?>?,
         );
       case AppRoutes.myAccont:
-        return const MyAccount();
+        return MyAccount(logout: logout);
       default:
         return const Home();
     }

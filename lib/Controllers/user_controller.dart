@@ -26,6 +26,15 @@ class UserController {
     }
   }
 
+  Future<Person> getByUid(String uid) async {
+    try {
+      var user = await _userRepository.getByUid(uid);
+      return user;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<bool> create(
     String email,
     String password,
