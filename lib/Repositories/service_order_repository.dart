@@ -37,9 +37,15 @@ class ServiceOrderRepository {
   }
 
   Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrders(
-      {String value = ""}) async {
+      {String value = "", List<String> chooseServiceOrder = const []}) async {
+    final initalRequest = _serviceOrderCollection;
+
+    if (chooseServiceOrder.isNotEmpty) {
+      initalRequest.where("id", whereIn: chooseServiceOrder);
+    }
+
     if (value.isEmpty) {
-      final serviceOrders = await _serviceOrderCollection
+      final serviceOrders = await initalRequest
           .where("deleted", isEqualTo: false)
           .orderBy("referenceNumber")
           .get();
@@ -47,7 +53,7 @@ class ServiceOrderRepository {
       return serviceOrders.docs;
     }
 
-    final serviceOrders = await _serviceOrderCollection
+    final serviceOrders = await initalRequest
         .where("deleted", isEqualTo: false)
         .orderBy("referenceNumber")
         .startAt([value]).endAt(["$value\uf8ff"]).get();

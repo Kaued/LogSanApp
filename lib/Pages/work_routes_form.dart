@@ -39,6 +39,7 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
   );
 
   List<ServiceOrder> serviceOrders = [];
+  List<String> chooseServiceOrders = [];
 
   bool _checkConfiguration() => true;
 
@@ -74,8 +75,11 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
   void showServiceOrderModal() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return const ServiceOrderModal();
+        return ServiceOrderModal(
+          chooseServiceOrders: chooseServiceOrders,
+        );
       },
     );
   }

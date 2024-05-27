@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
+import 'package:logsan_app/Repositories/type_order_repository.dart';
 import 'package:logsan_app/Repositories/user_repository.dart';
 import 'package:logsan_app/Repositories/work_route_repository.dart';
 
@@ -17,6 +19,7 @@ class WorkRouteController {
   final UserRepository _userRepository = UserRepository.instance;
   final ServiceOrderRepository _serviceOrderRepository =
       ServiceOrderRepository.instance;
+  final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
 
   static WorkRouteController instance = WorkRouteController._();
 
@@ -27,10 +30,9 @@ class WorkRouteController {
   }
 
   Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrderEnables(
-      {String search = ""}) async {
+      {String search = "", List<String> chooseServiceOrders = const []}) async {
     final serviceOrders = await _serviceOrderRepository.getServiceOrders(
-      value: search,
-    );
+        value: search, chooseServiceOrder: chooseServiceOrders);
 
     final ordersInRoute = await _orderRouteRepository.getOrders(
         serviceOrders: serviceOrders.map((e) => e.id).toList());
@@ -58,5 +60,9 @@ class WorkRouteController {
     }).toList();
 
     return serviceOrdersEnable;
+  }
+
+  Future<List<QueryDocumentSnapshot<TypeOrder>>> getTypeOrders() async {
+    return await _typeOrderRepository.listTypeOrder();
   }
 }
