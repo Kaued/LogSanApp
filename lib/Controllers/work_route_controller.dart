@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logsan_app/Models/person.dart';
-import 'package:logsan_app/Pages/user_list.dart';
+import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
+import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
 import 'package:logsan_app/Repositories/user_repository.dart';
 import 'package:logsan_app/Repositories/work_route_repository.dart';
@@ -12,6 +15,8 @@ class WorkRouteController {
       OrderRouteRepository.instance;
   final StatusRepository _statusRepository = StatusRepository.instance;
   final UserRepository _userRepository = UserRepository.instance;
+  final ServiceOrderRepository _serviceOrderRepository =
+      ServiceOrderRepository.instance;
 
   static WorkRouteController instance = WorkRouteController._();
 
@@ -19,5 +24,39 @@ class WorkRouteController {
 
   Future<List<QueryDocumentSnapshot<Person>>> getUsers() async {
     return await _userRepository.getUsers();
+  }
+
+  Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrderEnables(
+      {String search = ""}) async {
+    final serviceOrders = await _serviceOrderRepository.getServiceOrders(
+      value: search,
+    );
+
+    final ordersInRoute = await _orderRouteRepository.getOrders(
+        serviceOrders: serviceOrders.map((e) => e.id).toList());
+
+    const List<String> status = [
+      "2bQyWvK3RptcNaSg60N3", // Sem Agendamento
+      "xQdJryD4qLyzVnz6l7As" // Agendada
+    ];
+
+    final serviceOrdersEnable = serviceOrders.where((serviceOrder) {
+      if (!ordersInRoute
+          .map((e) => e.data().serviceOrderId)
+          .toList()
+          .contains(serviceOrder.id)) {
+        return true;
+      }
+
+      final lastRoute = ordersInRoute.firstWhere(
+        (element) => element.data().serviceOrderId == serviceOrder.id,
+      );
+
+      final statusId = lastRoute.data().statusId;
+
+      return status.contains(statusId);
+    }).toList();
+
+    return serviceOrdersEnable;
   }
 }

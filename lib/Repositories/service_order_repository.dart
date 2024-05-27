@@ -36,6 +36,25 @@ class ServiceOrderRepository {
     return await _serviceOrderCollection.doc(id).update(serviceOrder.toJson());
   }
 
+  Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrders(
+      {String value = ""}) async {
+    if (value.isEmpty) {
+      final serviceOrders = await _serviceOrderCollection
+          .where("deleted", isEqualTo: false)
+          .orderBy("referenceNumber")
+          .get();
+
+      return serviceOrders.docs;
+    }
+
+    final serviceOrders = await _serviceOrderCollection
+        .where("deleted", isEqualTo: false)
+        .orderBy("referenceNumber")
+        .startAt([value]).endAt(["$value\uf8ff"]).get();
+
+    return serviceOrders.docs;
+  }
+
   Future<void> deleteServiceOrder(String id) async {
     final serviceOrderResponse = await _serviceOrderCollection.doc(id).get();
     final serviceOrder = serviceOrderResponse.data();

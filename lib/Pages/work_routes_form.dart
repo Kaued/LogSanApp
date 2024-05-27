@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:logsan_app/Components/WorkRoutes/service_order_modal.dart';
 import 'package:logsan_app/Components/WorkRoutes/work_route_input.dart';
 import 'package:logsan_app/Components/chip_form.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/person.dart';
+import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
@@ -35,6 +38,8 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     finish: false,
   );
 
+  List<ServiceOrder> serviceOrders = [];
+
   bool _checkConfiguration() => true;
 
   @override
@@ -64,6 +69,15 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
           .data()
           .name;
     });
+  }
+
+  void showServiceOrderModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return const ServiceOrderModal();
+      },
+    );
   }
 
   String? validateDate(String? value) {
@@ -264,7 +278,37 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
                                 ],
                               ),
                             ),
+                            const Spacer(),
+                            IconButton(
+                              onPressed: () {
+                                showServiceOrderModal();
+                              },
+                              iconSize: 32,
+                              icon: Icon(
+                                Icons.add,
+                                color: theme.colorScheme.secondary,
+                              ),
+                            )
                           ],
+                        ),
+                      ),
+                      Container(
+                        height: 200,
+                        padding: const EdgeInsets.only(top: 16),
+                        child: ListView.builder(
+                          itemCount: serviceOrders.length,
+                          itemBuilder: (context, index) {
+                            if (serviceOrders.isEmpty) {
+                              return const Text(
+                                  "Nenhuma ordem de serviço cadastrada.");
+                            }
+
+                            final serviceOrder = serviceOrders[index];
+
+                            return ListTile(
+                              title: Text(serviceOrder.referenceNumber),
+                            );
+                          },
                         ),
                       ),
                     ],

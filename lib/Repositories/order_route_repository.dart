@@ -12,4 +12,20 @@ class OrderRouteRepository {
             OrderRoute.fromJson(snapshot.data()!),
         toFirestore: (orderRoute, options) => orderRoute.toJson(),
       );
+
+  Future<List<QueryDocumentSnapshot<OrderRoute>>> getOrders(
+      {List<String>? serviceOrders}) async {
+    if (serviceOrders == null || serviceOrders.isEmpty) {
+      final orders = await _orderRouteCollection.get();
+
+      return orders.docs;
+    }
+
+    final orders = await _orderRouteCollection
+        .where("service_order_id", whereIn: serviceOrders)
+        .orderBy("date", descending: true)
+        .get();
+
+    return orders.docs;
+  }
 }
