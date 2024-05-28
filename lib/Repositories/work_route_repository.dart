@@ -12,4 +12,10 @@ class WorkRouteRepository {
             WorkRoute.fromJson(snapshot.data()!),
         toFirestore: (workRoute, options) => workRoute.toJson(),
       );
+
+  Future<String> createWorkRoute(WorkRoute workRoute) async {
+    final document = await _workRouteCollection.add(workRoute);
+
+    return document.id;
+  }
 }

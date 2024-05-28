@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
+import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
@@ -64,5 +66,23 @@ class WorkRouteController {
 
   Future<List<QueryDocumentSnapshot<TypeOrder>>> getTypeOrders() async {
     return await _typeOrderRepository.listTypeOrder();
+  }
+
+  Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrdersById(
+      List<String> serviceOrders) async {
+    if (serviceOrders.isEmpty) {
+      return [];
+    }
+
+    return await _serviceOrderRepository.getListServiceOrderById(
+        ids: serviceOrders);
+  }
+
+  Future<void> createWorkRoute(
+      {required WorkRoute workRoute,
+      required List<String> chooseServiceOrder}) async {
+    final workRouteId = await _workRouteRepository.createWorkRoute(workRoute);
+
+    
   }
 }

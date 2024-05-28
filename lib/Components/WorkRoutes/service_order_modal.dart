@@ -2,15 +2,21 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logsan_app/Components/loading_positioned.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 
 class ServiceOrderModal extends StatefulWidget {
-  const ServiceOrderModal({super.key, required this.chooseServiceOrders});
+  const ServiceOrderModal({
+    super.key,
+    required this.chooseServiceOrders,
+    required this.onSave,
+  });
 
   final List<String> chooseServiceOrders;
+  final void Function(List<String> chooseServiceOrders) onSave;
 
   @override
   State<ServiceOrderModal> createState() => _ServiceOrderModalState();
@@ -29,11 +35,6 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      chooseServiceOrders = widget.chooseServiceOrders;
-    });
-
     _loadServiceOrders();
   }
 
@@ -127,6 +128,11 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
     });
   }
 
+  void saveForm() {
+    widget.onSave(chooseServiceOrders);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -166,6 +172,11 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                       textAlign: TextAlign.start,
                     ),
                   ),
+                  const Spacer(),
+                  Chip(
+                    label: Text("${chooseServiceOrders.length}"),
+                    backgroundColor: Colors.white,
+                  ),
                 ],
               ),
             ),
@@ -190,8 +201,9 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                               controller: _searchController,
                               onChanged: _onSearchChanged,
                             ),
-                            SizedBox(
-                              height: 300,
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              height: 280,
                               child: ListView.builder(
                                   itemCount: serviceOrders.length,
                                   itemBuilder: (context, index) {
@@ -268,7 +280,75 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                                           )),
                                     );
                                   }),
-                            )
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 20,
+                                        horizontal: 20,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
+                                          child: Text(
+                                            "Cancelar",
+                                            style: theme.textTheme.titleMedium!
+                                                .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: saveForm,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green[600],
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 20,
+                                      horizontal: 20,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: Text(
+                                          "Salvar",
+                                          style: theme.textTheme.titleMedium!
+                                              .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

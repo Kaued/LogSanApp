@@ -28,4 +28,8 @@ class OrderRouteRepository {
 
     return orders.docs;
   }
+
+  Future<void> createOrderRoute(OrderRoute orderRoute) async {
+    await _orderRouteCollection.add(orderRoute);
+  }
 }

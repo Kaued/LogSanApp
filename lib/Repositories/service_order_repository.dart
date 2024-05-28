@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:logsan_app/Models/service_order.dart';
 
 class ServiceOrderRepository {
@@ -38,14 +39,15 @@ class ServiceOrderRepository {
 
   Future<List<QueryDocumentSnapshot<ServiceOrder>>> getServiceOrders(
       {String value = "", List<String> chooseServiceOrder = const []}) async {
-    final initalRequest = _serviceOrderCollection;
+    Query<ServiceOrder> initialRequest = _serviceOrderCollection;
 
     if (chooseServiceOrder.isNotEmpty) {
-      initalRequest.where("id", whereIn: chooseServiceOrder);
+      initialRequest = initialRequest.where(FieldPath.documentId,
+          whereNotIn: chooseServiceOrder);
     }
 
     if (value.isEmpty) {
-      final serviceOrders = await initalRequest
+      final serviceOrders = await initialRequest
           .where("deleted", isEqualTo: false)
           .orderBy("referenceNumber")
           .get();
@@ -53,10 +55,20 @@ class ServiceOrderRepository {
       return serviceOrders.docs;
     }
 
-    final serviceOrders = await initalRequest
+    final serviceOrders = await initialRequest
         .where("deleted", isEqualTo: false)
         .orderBy("referenceNumber")
         .startAt([value]).endAt(["$value\uf8ff"]).get();
+
+    return serviceOrders.docs;
+  }
+
+  Future<List<QueryDocumentSnapshot<ServiceOrder>>> getListServiceOrderById(
+      {required List<String> ids}) async {
+    final serviceOrders = await _serviceOrderCollection
+        .where("deleted", isEqualTo: false)
+        .where(FieldPath.documentId, whereIn: ids)
+        .get();
 
     return serviceOrders.docs;
   }

@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:logsan_app/Components/WorkRoutes/list_service_order.dart';
 import 'package:logsan_app/Components/WorkRoutes/service_order_modal.dart';
 import 'package:logsan_app/Components/WorkRoutes/work_route_input.dart';
 import 'package:logsan_app/Components/chip_form.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
@@ -38,8 +41,9 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     finish: false,
   );
 
-  List<ServiceOrder> serviceOrders = [];
+  List<QueryDocumentSnapshot<ServiceOrder>> serviceOrders = [];
   List<String> chooseServiceOrders = [];
+  List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
 
   bool _checkConfiguration() => true;
 
@@ -51,6 +55,7 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
 
   Future<void> _loadData() async {
     final usersResponse = await controller.getUsers();
+    final typeOrdersResponse = await controller.getTypeOrders();
 
     if (widget.arguments != null && !widget.arguments!.isAddMode) {
       setState(() {
@@ -60,7 +65,12 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
             .firstWhere((element) => element.id == workRoute.uid)
             .data()
             .name;
+        typeOrders = typeOrdersResponse;
       });
+
+      await loadServiceOrders();
+
+      return;
     }
 
     setState(() {
@@ -69,7 +79,29 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
           .firstWhere((element) => element.data().uid == workRoute.uid)
           .data()
           .name;
+      typeOrders = typeOrdersResponse;
     });
+  }
+
+  Future<void> loadServiceOrders() async {
+    if (chooseServiceOrders.isEmpty) {
+      return;
+    }
+
+    final serviceOrdersResponse =
+        await controller.getServiceOrdersById(chooseServiceOrders);
+
+    setState(() {
+      serviceOrders = serviceOrdersResponse;
+    });
+  }
+
+  void onSaveChooseServiceOrders(List<String> serviceOrders) {
+    setState(() {
+      chooseServiceOrders = [...serviceOrders, ...chooseServiceOrders];
+    });
+
+    loadServiceOrders();
   }
 
   void showServiceOrderModal() {
@@ -79,6 +111,7 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
       builder: (context) {
         return ServiceOrderModal(
           chooseServiceOrders: chooseServiceOrders,
+          onSave: onSaveChooseServiceOrders,
         );
       },
     );
@@ -93,6 +126,13 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
 
   String _displayOptions(QueryDocumentSnapshot<Person> option) {
     return option.data().name;
+  }
+
+  void _removeSelectedServiceOrder(String id) {
+    setState(() {
+      chooseServiceOrders.remove(id);
+      serviceOrders.removeWhere((element) => element.id == id);
+    });
   }
 
   @override
@@ -297,24 +337,14 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
                         ),
                       ),
                       Container(
-                        height: 200,
-                        padding: const EdgeInsets.only(top: 16),
-                        child: ListView.builder(
-                          itemCount: serviceOrders.length,
-                          itemBuilder: (context, index) {
-                            if (serviceOrders.isEmpty) {
-                              return const Text(
-                                  "Nenhuma ordem de serviço cadastrada.");
-                            }
-
-                            final serviceOrder = serviceOrders[index];
-
-                            return ListTile(
-                              title: Text(serviceOrder.referenceNumber),
-                            );
-                          },
-                        ),
-                      ),
+                          height: screen.height * 0.5,
+                          padding: const EdgeInsets.only(top: 16),
+                          child: ServiceOrderListRoute(
+                            chooseServiceOrders: chooseServiceOrders,
+                            deleteServiceOrder: _removeSelectedServiceOrder,
+                            serviceOrders: serviceOrders,
+                            typeOrders: typeOrders,
+                          )),
                     ],
                   ),
                 ),
