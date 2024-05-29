@@ -15,7 +15,7 @@ class TypeOrderRepository {
       );
 
   Future<List<QueryDocumentSnapshot<TypeOrder>>> listTypeOrder() async {
-    final types = _typeOrderCollection.get().then((value) => value.docs);
+    final types = await _typeOrderCollection.get().then((value) => value.docs);
 
     return types;
   }

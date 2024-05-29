@@ -18,4 +18,12 @@ class WorkRouteRepository {
 
     return document.id;
   }
+
+  Future<void> updateWorkRoute(WorkRoute workRoute, String id) async {
+    await _workRouteCollection.doc(id).update(workRoute.toJson());
+  }
+
+  Future<DocumentSnapshot<WorkRoute>> getWorkRoute(String id) async {
+    return await _workRouteCollection.doc(id).get();
+  }
 }

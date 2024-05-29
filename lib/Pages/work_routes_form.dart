@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:logsan_app/Components/WorkRoutes/list_service_order.dart';
 import 'package:logsan_app/Components/WorkRoutes/service_order_modal.dart';
@@ -13,6 +11,7 @@ import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
+import 'package:logsan_app/Utils/alerts.dart';
 
 import '../Components/WorkRoutes/user_autocomplete.dart';
 
@@ -33,10 +32,11 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
   final dateFormatBr = DateFormat('dd/MM/yyyy');
   List<QueryDocumentSnapshot<Person>> users = [];
   String userInitialValue = "";
+  bool loading = false;
 
   WorkRoute workRoute = WorkRoute(
     toDate: Timestamp.now(),
-    uid: "VzRrPCKWYVebUJTichuszItMf6v2",
+    uid: "",
     deleted: false,
     finish: false,
   );
@@ -53,12 +53,16 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     _loadData();
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadData() async {        
     final usersResponse = await controller.getUsers();
     final typeOrdersResponse = await controller.getTypeOrders();
 
     if (widget.arguments != null && !widget.arguments!.isAddMode) {
+      final ordersInRoute =
+          await controller.getChooseServiceOrder(widget.arguments!.id!);
+
       setState(() {
+        chooseServiceOrders = ordersInRoute;
         users = usersResponse;
         workRoute = widget.arguments!.values!;
         userInitialValue = users
@@ -75,10 +79,6 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
 
     setState(() {
       users = usersResponse;
-      userInitialValue = users
-          .firstWhere((element) => element.data().uid == workRoute.uid)
-          .data()
-          .name;
       typeOrders = typeOrdersResponse;
     });
   }
@@ -160,8 +160,72 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     }
 
     void onSubmit() async {
-      if (!formKey.currentState!.validate()) {
-        return;
+      if (formKey.currentState!.validate()) {
+        if (workRoute.uid.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(Alerts.errorMessage(
+              context: context,
+              message: "É necessário informar o usuário",
+              title: "Rota de Serviço Inválida"));
+        }
+
+        if (chooseServiceOrders.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(Alerts.errorMessage(
+              context: context,
+              message: "É necessário informar ao menos uma ordem de serviço",
+              title: "Rota de Serviço Inválida"));
+        }
+
+        try {
+          setState(() {
+            loading = true;
+          });
+
+          if (widget.arguments != null && !widget.arguments!.isAddMode) {
+            await controller.updateWorkRoute(
+              workRoute: workRoute,
+              chooseServiceOrder: chooseServiceOrders,
+              id: widget.arguments!.id!,
+            );
+
+            if (context.mounted) {
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                Alerts.successMessage(
+                    context: context,
+                    message: "Rota de serviço editada com sucesso",
+                    title: "Rota de Serviço"),
+              );
+            }
+            return;
+          }
+          await controller.createWorkRoute(
+              workRoute: workRoute, chooseServiceOrder: chooseServiceOrders);
+
+          if (context.mounted) {
+            Navigator.of(context).pop();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              Alerts.successMessage(
+                  context: context,
+                  message: "Rota de serviço criada com sucesso",
+                  title: "Rota de Serviço"),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              Alerts.errorMessage(
+                  context: context,
+                  message: "Erro ao criar a rota de serviço",
+                  title: "Rota de Serviço Inválida"),
+            );
+          }
+        } finally {
+          setState(() {
+            loading = false;
+          });
+        }
       }
     }
 

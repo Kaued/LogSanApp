@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
@@ -81,8 +79,70 @@ class WorkRouteController {
   Future<void> createWorkRoute(
       {required WorkRoute workRoute,
       required List<String> chooseServiceOrder}) async {
+    if (chooseServiceOrder.isEmpty) {
+      throw Exception("Nenhuma ordem de serviço selecionada");
+    }
+
     final workRouteId = await _workRouteRepository.createWorkRoute(workRoute);
 
-    
+    for (String serviceOrder in chooseServiceOrder) {
+      final orderRoute = OrderRoute(
+          serviceOrderId: serviceOrder,
+          routeId: workRouteId,
+          statusId: "uQ62CMUv28civO5sUo5M",
+          date: Timestamp.now());
+
+      await _orderRouteRepository.createOrderRoute(orderRoute);
+    }
+
+    return;
+  }
+
+  Future<List<String>> getChooseServiceOrder(String routeId) async {
+    final ordersInRoute = await _orderRouteRepository.getByRoute(routeId);
+
+    return ordersInRoute.map((e) => e.data().serviceOrderId).toList();
+  }
+
+  Future<void> updateWorkRoute({
+    required WorkRoute workRoute,
+    required String id,
+    required List<String> chooseServiceOrder,
+  }) async {
+    if (chooseServiceOrder.isEmpty) {
+      throw Exception("Nenhuma ordem de serviço selecionada");
+    }
+
+    await _workRouteRepository.updateWorkRoute(workRoute, id);
+
+    final ordersInRoute = await _orderRouteRepository.getByRoute(id);
+
+    final ordersInRouteIdsToDelete = ordersInRoute
+        .where((e) => !chooseServiceOrder.contains(e.data().serviceOrderId))
+        .toList();
+
+    for (QueryDocumentSnapshot<OrderRoute> orderToDelete
+        in ordersInRouteIdsToDelete) {
+      await _orderRouteRepository.deleteOrderRoute(orderToDelete.id);
+    }
+
+    final ordersInRouteIdsToCreate = chooseServiceOrder
+        .where((element) => !ordersInRoute
+            .map((e) => e.data().serviceOrderId)
+            .toList()
+            .contains(element))
+        .toList();
+
+    for (String orderToCreate in ordersInRouteIdsToCreate) {
+      final orderRoute = OrderRoute(
+          serviceOrderId: orderToCreate,
+          routeId: id,
+          statusId: "uQ62CMUv28civO5sUo5M",
+          date: Timestamp.now());
+
+      await _orderRouteRepository.createOrderRoute(orderRoute);
+    }
+
+    return;
   }
 }

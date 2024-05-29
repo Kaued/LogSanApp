@@ -32,4 +32,16 @@ class OrderRouteRepository {
   Future<void> createOrderRoute(OrderRoute orderRoute) async {
     await _orderRouteCollection.add(orderRoute);
   }
+
+  Future<List<QueryDocumentSnapshot<OrderRoute>>> getByRoute(
+      String routeId) async {
+    final orders =
+        await _orderRouteCollection.where("route_id", isEqualTo: routeId).get();
+
+    return orders.docs;
+  }
+
+  Future<void> deleteOrderRoute(String id) async {
+    await _orderRouteCollection.doc(id).delete();
+  }
 }
