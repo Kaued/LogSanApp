@@ -136,12 +136,14 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screen = MediaQuery.of(context).size;
 
     return SizedBox(
       height: 460,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               decoration: BoxDecoration(
@@ -152,7 +154,7 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                   color: theme.colorScheme.secondary),
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(
-                vertical: 15,
+                vertical: 4,
                 horizontal: 10,
               ),
               child: Row(
@@ -203,7 +205,7 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(vertical: 8),
-                              height: 280,
+                              height: screen.height * 0.28,
                               child: ListView.builder(
                                   itemCount: serviceOrders.length,
                                   itemBuilder: (context, index) {
@@ -292,7 +294,7 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
+                                        vertical: 8,
                                         horizontal: 20,
                                       ),
                                     ),
@@ -323,7 +325,7 @@ class _ServiceOrderModalState extends State<ServiceOrderModal> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green[600],
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 20,
+                                      vertical: 8,
                                       horizontal: 20,
                                     ),
                                   ),

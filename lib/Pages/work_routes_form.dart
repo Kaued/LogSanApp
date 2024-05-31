@@ -53,7 +53,7 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     _loadData();
   }
 
-  Future<void> _loadData() async {        
+  Future<void> _loadData() async {
     final usersResponse = await controller.getUsers();
     final typeOrdersResponse = await controller.getTypeOrders();
 
@@ -140,6 +140,8 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
     final theme = Theme.of(context);
     final screen = MediaQuery.of(context).size;
     final formKey = GlobalKey<FormState>();
+    final double expandedWidth = screen.width - 144;
+    const double expandedHeight = 70;
 
     Future<void> selectDate() async {
       formKey.currentState!.save();
@@ -275,85 +277,10 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
           vertical: 16,
           horizontal: 16,
         ),
-        child: Column(
-          children: [
-            Card(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16, top: 8),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.route),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Dados da Rota de Serviço",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  "Informações sobre a rota de serviço.",
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          children: [
-                            WorkRouteInput(
-                              labelText: "Data da Rota",
-                              hintText: "Data em que será realizada a rota.",
-                              validator: validateDate,
-                              onTap: selectDate,
-                              readOnly: true,
-                              initialValue: dateFormatBr.format(
-                                workRoute.toDate.toDate(),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: UserAutocomplete(
-                                users: users,
-                                onSelected: (value) {
-                                  setState(() {
-                                    workRoute.uid = value.id;
-                                    userInitialValue = value.data().name;
-                                  });
-                                },
-                                userInitialValue: userInitialValue,
-                                displayOptions: _displayOptions,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Card(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Card(
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -363,58 +290,141 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
                         padding: const EdgeInsets.only(bottom: 16, top: 8),
                         child: Row(
                           children: [
-                            const Icon(Icons.text_snippet_sharp),
-                            Padding(
+                            const Icon(Icons.route),
+                            Container(
+                              width: expandedWidth,
+                              height: expandedHeight,
                               padding: const EdgeInsets.only(left: 10),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    "Ordens de Serviço",
+                                    "Dados da Rota de Serviço",
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   Text(
-                                    "Ordens de serviço pertencente a rota de serviço.",
+                                    "Informações sobre a rota de serviço.",
                                     style: TextStyle(
                                       color: Colors.grey[600],
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () {
-                                showServiceOrderModal();
-                              },
-                              iconSize: 32,
-                              icon: Icon(
-                                Icons.add,
-                                color: theme.colorScheme.secondary,
-                              ),
-                            )
                           ],
                         ),
                       ),
-                      Container(
-                          height: screen.height * 0.5,
-                          padding: const EdgeInsets.only(top: 16),
-                          child: ServiceOrderListRoute(
-                            chooseServiceOrders: chooseServiceOrders,
-                            deleteServiceOrder: _removeSelectedServiceOrder,
-                            serviceOrders: serviceOrders,
-                            typeOrders: typeOrders,
-                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            children: [
+                              WorkRouteInput(
+                                labelText: "Data da Rota",
+                                hintText: "Data em que será realizada a rota.",
+                                validator: validateDate,
+                                onTap: selectDate,
+                                readOnly: true,
+                                initialValue: dateFormatBr.format(
+                                  workRoute.toDate.toDate(),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 14),
+                                child: UserAutocomplete(
+                                  users: users,
+                                  onSelected: (value) {
+                                    setState(() {
+                                      workRoute.uid = value.id;
+                                      userInitialValue = value.data().name;
+                                    });
+                                  },
+                                  userInitialValue: userInitialValue,
+                                  displayOptions: _displayOptions,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 16),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16, top: 8),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.text_snippet_sharp),
+                              Container(
+                                width: expandedWidth,
+                                height: expandedHeight,
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Ordens de Serviço",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Ordens de serviço pertencente a rota de serviço.",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  showServiceOrderModal();
+                                },
+                                iconSize: 32,
+                                icon: Icon(
+                                  Icons.add,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                            height: screen.height * 0.2 + 16,
+                            padding: const EdgeInsets.only(top: 16),
+                            child: ServiceOrderListRoute(
+                              chooseServiceOrders: chooseServiceOrders,
+                              deleteServiceOrder: _removeSelectedServiceOrder,
+                              serviceOrders: serviceOrders,
+                              typeOrders: typeOrders,
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

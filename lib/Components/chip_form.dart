@@ -13,7 +13,7 @@ class ChipForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: 8,
+        left: 4,
       ),
       child: Chip(
         label: Text(

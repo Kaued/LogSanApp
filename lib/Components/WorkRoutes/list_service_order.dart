@@ -57,7 +57,7 @@ class ServiceOrderListRoute extends StatelessWidget {
               }
 
               return Card(
-                elevation: 2  ,
+                elevation: 2,
                 child: Dismissible(
                   onDismissed: (direction) {
                     deleteServiceOrder(id);
@@ -117,6 +117,7 @@ class ServiceOrderListRoute extends StatelessWidget {
                 fontSize: 24,
                 fontWeight: FontWeight.w500,
               ),
+              textAlign: TextAlign.center,
             ),
           );
   }
