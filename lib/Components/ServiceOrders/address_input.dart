@@ -19,11 +19,12 @@ class AddressInput extends StatelessWidget {
       return Row(
         children: [
           const Flexible(
-            flex: 2,
+            flex: 1,
             child: Divider(),
           ),
           Flexible(
             flex: 4,
+            fit: FlexFit.tight,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -51,6 +52,7 @@ class AddressInput extends StatelessWidget {
                           "Adicionar Endereço",
                           style: theme.textTheme.titleMedium!.copyWith(
                             color: Colors.white,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -61,7 +63,7 @@ class AddressInput extends StatelessWidget {
             ),
           ),
           const Flexible(
-            flex: 2,
+            flex: 1,
             child: Divider(),
           )
         ],
@@ -76,19 +78,25 @@ class AddressInput extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 8,
-            horizontal: 4,
+            horizontal: 2,
           ),
           child: ListTile(
             title: Text(
               "${address.street}, ${address.number?.toString()} - ${address.neighborhood}",
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
+                fontSize: 14,
               ),
             ),
-            leading: Icon(
-              Icons.location_on_outlined,
-              color: theme.colorScheme.primary,
-              size: 32,
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 32,
+                ),
+              ],
             ),
             subtitle: Text("${address.city} - ${address.cep}"),
           ),

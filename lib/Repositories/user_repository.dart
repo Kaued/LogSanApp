@@ -12,6 +12,12 @@ class UserRepository {
 
   UserRepository._internal();
 
+  Future<List<QueryDocumentSnapshot<Person>>> getUsers() async {
+    var users = await _userCollection.get();
+
+    return users.docs;
+  }
+
   Future<bool> update(
     String id, {
     String? name,

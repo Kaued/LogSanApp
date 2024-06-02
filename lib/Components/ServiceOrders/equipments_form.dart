@@ -86,6 +86,7 @@ class EquipmentsForm extends StatelessWidget {
                                         style: theme.textTheme.titleMedium!
                                             .copyWith(
                                           color: Colors.white,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
@@ -138,8 +139,9 @@ class EquipmentsForm extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -201,6 +203,7 @@ class EquipmentsForm extends StatelessWidget {
                                         style: theme.textTheme.titleMedium!
                                             .copyWith(
                                           color: Colors.white,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
@@ -253,8 +256,9 @@ class EquipmentsForm extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),

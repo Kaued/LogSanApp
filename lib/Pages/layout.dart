@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Pages/home.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
+import 'package:logsan_app/Pages/my_account.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
+import 'package:logsan_app/Pages/work_routes_form.dart';
+import 'package:logsan_app/Pages/work_routes_list.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
-import 'package:logsan_app/Pages/my_account.dart';
 
 class Layout extends StatefulWidget {
   const Layout({super.key});
@@ -100,6 +103,11 @@ class _LayoutState extends State<Layout> {
         );
       case AppRoutes.myAccont:
         return MyAccount(logout: logout);
+      case AppRoutes.workRoutesList:
+        return const WorkRoutesList();
+      case AppRoutes.workRouteForm:
+        return WorkRouteForm(
+            arguments: arguments as FormArguments<WorkRoute?>?);
       default:
         return const Home();
     }

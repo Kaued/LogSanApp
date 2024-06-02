@@ -312,7 +312,8 @@ class _AddressModalState extends State<AddressModal> {
                                 validator: (value) => null,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8),
@@ -322,7 +323,7 @@ class _AddressModalState extends State<AddressModal> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
                                         padding: const EdgeInsets.symmetric(
-                                          vertical: 20,
+                                          vertical: 8,
                                           horizontal: 20,
                                         ),
                                       ),
@@ -354,7 +355,7 @@ class _AddressModalState extends State<AddressModal> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green[600],
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
+                                        vertical: 8,
                                         horizontal: 20,
                                       ),
                                     ),

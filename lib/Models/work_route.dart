@@ -14,7 +14,7 @@ class WorkRoute {
           uid: json["uid"]! as String,
           toDate: json["to_date"]! as Timestamp,
           finish: json["finish"]! as bool,
-          finishAt: json["finish_at"]! as Timestamp?,
+          finishAt: json["finish_at"] as Timestamp?,
           deleted: json["deleted"]! as bool,
         );
 
@@ -25,7 +25,7 @@ class WorkRoute {
   Timestamp toDate;
 
   Map<String, Object?> toJson() {
-    return {  
+    return {
       "uid": uid,
       "to_date": toDate,
       "finish_at": finishAt,

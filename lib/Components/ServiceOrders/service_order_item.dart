@@ -66,7 +66,7 @@ class ServiceOrderItem extends StatelessWidget {
                         color: theme.colorScheme.secondary,
                       ),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 16),
+                          vertical: 12, horizontal: 16),
                       child: const Row(
                         children: [
                           Icon(Icons.delete, color: Colors.white),
@@ -78,7 +78,7 @@ class ServiceOrderItem extends StatelessWidget {
                               child: Text(
                                 "Tem certeza?",
                                 style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -89,8 +89,11 @@ class ServiceOrderItem extends StatelessWidget {
                       ),
                     ),
                     content: Text(
-                      "A ordem de serviço ${serviceOrder.referenceNumber} será apagada e não poderá ser mais utilizada. Deseja continuar?",
+                      "Tem certeza que deseja apagar a ordem de serviço ${serviceOrder.referenceNumber}?",
                       softWrap: true,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
                     actions: [
                       ElevatedButton(
@@ -103,7 +106,7 @@ class ServiceOrderItem extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                           padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 12),
+                              vertical: 8, horizontal: 12),
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                         ),
@@ -120,7 +123,7 @@ class ServiceOrderItem extends StatelessWidget {
                             color: theme.colorScheme.primary,
                           ),
                           padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 12),
+                              vertical: 8, horizontal: 12),
                           backgroundColor: theme.colorScheme.primary,
                         ),
                         child: const Text("Confirmar"),
@@ -135,18 +138,20 @@ class ServiceOrderItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             child: ListTile(
               leading: SizedBox(
-                width: 90,
+                width: 58,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Icon(
                       iconType,
-                      size: 32,
+                      size: 24,
                       color: theme.colorScheme.primary,
                     ),
                     Text(
                       typeOrder.name,
-                      style: theme.textTheme.labelSmall,
+                      style: theme.textTheme.labelSmall!.copyWith(
+                        fontSize: 6,
+                      ),
                     )
                   ],
                 ),
@@ -154,7 +159,7 @@ class ServiceOrderItem extends StatelessWidget {
               title: Text(
                 serviceOrder.referenceNumber,
                 style: theme.textTheme.titleLarge!.copyWith(
-                  fontSize: 24,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -162,7 +167,7 @@ class ServiceOrderItem extends StatelessWidget {
                 " ${dateBr.format(serviceOrder.maxDate.toDate())}",
                 style: theme.textTheme.titleMedium!.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: 10,
                   color:
                       serviceOrder.maxDate.toDate().compareTo(DateTime.now()) <
                               0
@@ -170,7 +175,13 @@ class ServiceOrderItem extends StatelessWidget {
                           : Colors.grey[600],
                 ),
               ),
-              subtitle: Text(serviceOrder.placeName),
+              subtitle: Text(
+                serviceOrder.placeName,
+                style: theme.textTheme.titleLarge!.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
         ),
