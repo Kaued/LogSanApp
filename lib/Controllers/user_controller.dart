@@ -12,12 +12,7 @@ class UserController {
 
   UserController._internal();
 
-  Stream<QuerySnapshot<Person>> list({String? field, String value = ""}) {
-    if (value.isNotEmpty && field != null) {
-      final users = _userRepository.listUsers(field: field, value: value);
-      return users;
-    }
-
+  Stream<QuerySnapshot<Person>> list() {
     final users = _userRepository.listUsers();
     return users;
   }
@@ -25,6 +20,15 @@ class UserController {
   Future<Person> getById(String id) async {
     try {
       var user = await _userRepository.getById(id);
+      return user;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Person> getByUid(String uid) async {
+    try {
+      var user = await _userRepository.getByUid(uid);
       return user;
     } catch (e) {
       throw Exception(e);
@@ -49,14 +53,12 @@ class UserController {
 
   Future<bool> update(
     String id, {
-    required String email,
     required String name,
     required bool isAdmin,
   }) async {
     try {
       await _userRepository.update(
         id,
-        email: email,
         name: name,
         isAdmin: isAdmin,
       );

@@ -25,7 +25,6 @@ class _UserListState extends State<UserList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     list();
@@ -41,93 +40,130 @@ class _UserListState extends State<UserList> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        actions: const [],
-        title: const Text("Listar Usuários"),
+        elevation: 0,
+        title: Text(
+          "Usuários",
+          style: theme.textTheme.titleMedium!.copyWith(
+            color: Colors.white,
+          ),
+        ),
+        automaticallyImplyLeading: false,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed("/user-form",
-            arguments: FormArguments<Person>(
-              isAddMode: true,
-            )),
-        mini: true,
+        onPressed: () => Navigator.of(context).pushNamed(
+          "/user-form",
+          arguments: FormArguments<Person>(
+            isAddMode: true,
+          ),
+        ),
         child: const Icon(Icons.add),
       ),
-      body: StreamBuilder<QuerySnapshot<Person>>(
-          stream: streamUser,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done &&
-                snapshot.connectionState != ConnectionState.active) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.primary,
+              Colors.white,
+            ],
+            begin: const FractionalOffset(0, 0),
+            end: const FractionalOffset(0, 1),
+            stops: const [0, .65],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 8,
+        ),
+        child: Card(
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: StreamBuilder<QuerySnapshot<Person>>(
+              stream: streamUser,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done &&
+                    snapshot.connectionState != ConnectionState.active) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            if (!snapshot.hasData) {
-              return const Center(
-                child: Text("Não há usuário cadastrado"),
-              );
-            }
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: Text("Não há usuário cadastrado"),
+                  );
+                }
 
-            final users = snapshot.data!.docs;
+                final users = snapshot.data!.docs;
 
-            return ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Dismissible(
-                      key: Key(users[index].id.toString()),
-                      background: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        alignment: Alignment.centerRight,
-                        color: Colors.red,
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                      ),
-                      onDismissed: (_) {
-                        controller.delete(users[index].id);
-                      },
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 0),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed("/user-form",
-                                    arguments: FormArguments<Person>(
-                                      isAddMode: false,
-                                      values: users[index].data(),
-                                      id: users[index].id,
-                                    ));
-                              },
-                              child: ListTile(
-                                title: Text(users[index].data().name),
-                                subtitle: Text(
-                                  users[index].data().isAdmin
-                                      ? 'admin'
-                                      : 'comum',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w300),
-                                ),
-                              ),
+                return ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Dismissible(
+                          key: Key(users[index].id.toString()),
+                          background: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.centerRight,
+                            color: Colors.red,
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      height: 0,
-                    )
-                  ],
+                          onDismissed: (_) {
+                            controller.delete(users[index].id);
+                          },
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 0,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      "/user-form",
+                                      arguments: FormArguments<Person>(
+                                        isAddMode: false,
+                                        values: users[index].data(),
+                                        id: users[index].id,
+                                      ),
+                                    );
+                                  },
+                                  child: ListTile(
+                                    title: Text(users[index].data().name),
+                                    subtitle: Text(
+                                      users[index].data().isAdmin
+                                          ? 'admin'
+                                          : 'comum',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 0)
+                      ],
+                    );
+                  },
                 );
               },
-            );
-          }),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

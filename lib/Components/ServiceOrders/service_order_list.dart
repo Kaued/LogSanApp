@@ -47,6 +47,7 @@ class ServiceOrderList extends StatelessWidget {
         horizontal: 8,
       ),
       child: Card(
+        elevation: 0,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           child: ListView.builder(

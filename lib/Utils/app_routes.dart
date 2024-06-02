@@ -5,6 +5,7 @@ class AppRoutes {
   // User
   static const String userForm = "/user-form";
   static const String userList = "/user-list";
+  static const String myAccont = "/my-account";
 
   // Layout
   static const String home = "/home";

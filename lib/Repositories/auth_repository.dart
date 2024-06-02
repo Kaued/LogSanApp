@@ -1,5 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+class LoginResponse {
+  final bool success;
+  final User? userData;
+
+  LoginResponse({
+    required this.success,
+    this.userData,
+  });
+}
+
 class AuthRepository {
   static final AuthRepository instance = AuthRepository._internal();
 
@@ -9,17 +19,18 @@ class AuthRepository {
 
   AuthRepository._internal();
 
-  Future<bool> login(String email, String password) async {
+  Future<LoginResponse> login(String email, String password) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential data =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      return LoginResponse(success: true, userData: data.user);
     } on FirebaseAuthException catch (ex) {
       throw Exception(ex.message);
     }
-
-    return true;
   }
 
   Future<bool> logout() async {
@@ -34,5 +45,9 @@ class AuthRepository {
 
   bool isAuthenticated() {
     return FirebaseAuth.instance.currentUser != null;
+  }
+
+  User getAuthenticatedUser() {
+    return FirebaseAuth.instance.currentUser!;
   }
 }

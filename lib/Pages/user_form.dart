@@ -12,7 +12,6 @@ class UserForm extends StatefulWidget {
 }
 
 class _UserFormState extends State<UserForm> {
-  bool _checkConfiguration() => true;
   Person? user;
 
   final UserController _controller = UserController.instance;
@@ -34,7 +33,6 @@ class _UserFormState extends State<UserForm> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     setState(() {
@@ -48,7 +46,7 @@ class _UserFormState extends State<UserForm> {
     });
   }
 
-  void onSubmit() async {
+  Future<void> onSubmit(context) async {
     if (formKey.currentState!.validate()) {
       final emailText = email.text;
       final nomeText = nome.text;
@@ -57,143 +55,209 @@ class _UserFormState extends State<UserForm> {
         final senhaText = senha.text;
         try {
           await _controller.create(
-              emailText, senhaText, nomeText, isAdmin, false);
+            emailText,
+            senhaText,
+            nomeText,
+            isAdmin,
+            false,
+          );
 
           Navigator.of(context).pop();
-        } catch (error) {}
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                e.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
 
         return;
       }
 
       try {
-        await _controller.update(widget.arguments!.id!,
-            email: emailText, name: nomeText, isAdmin: isAdmin);
+        await _controller.update(
+          widget.arguments!.id!,
+          name: nomeText,
+          isAdmin: isAdmin,
+        );
 
         Navigator.of(context).pop();
-      } catch (e) {}
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     // Regex do email - validação
+    final theme = Theme.of(context);
     final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
     return Scaffold(
       appBar: AppBar(
-        actions: const [],
-        title: const Text(
-          'Adicionar usuário',
+        elevation: 0,
+        title: Text(
+          widget.arguments == null || widget.arguments!.isAddMode
+              ? "Adicionar usuário"
+              : "Editar usuário",
+          style: theme.textTheme.titleMedium!.copyWith(
+            color: Colors.white,
+          ),
         ),
       ),
-      body: Form(
-        key: formKey,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: TextFormField(
-                    controller: nome,
-                    decoration: const InputDecoration(
-                      labelText: "Nome",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, insira um nome';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: TextFormField(
-                    controller: email,
-                    decoration: const InputDecoration(
-                      labelText: "E-mail",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, insira um e-mail';
-                      }
-                      if (!regex.hasMatch(value)) {
-                        return 'Por favor, insira um e-mail válido';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                widget.arguments == null || widget.arguments!.isAddMode
-                    ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                          controller: senha,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: "Senha",
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, insira uma senha';
-                            }
-                            if (value.length < 8) {
-                              return 'Por favor, insira uma senha válida';
-                            }
-                            return null;
-                          },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.primary,
+              Colors.white,
+            ],
+            begin: const FractionalOffset(0, 0),
+            end: const FractionalOffset(0, 1),
+            stops: const [0, .65],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 8,
+        ),
+        child: Card(
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: Form(
+              key: formKey,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: TextFormField(
+                        controller: nome,
+                        decoration: const InputDecoration(
+                          labelText: "Nome",
+                          border: OutlineInputBorder(),
                         ),
-                      )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButtonFormField(
                         validator: (value) {
-                          if (value == null) {
-                            return 'Por favor, insira o tipo de usuário';
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira um nome';
                           }
                           return null;
                         },
-                        value: user == null
-                            ? typeUser.values.first
-                            : user!.isAdmin,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Tipo de Ordem de Serviço",
-                        ),
-                        items: typeUser.entries.map<DropdownMenuItem>((value) {
-                          return DropdownMenuItem(
-                            value: value.value,
-                            child: Text(value.key),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            isAdmin = value;
-                          });
-                        },
                       ),
                     ),
-                  ),
+                    widget.arguments == null || widget.arguments!.isAddMode
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: email,
+                              decoration: const InputDecoration(
+                                labelText: "E-mail",
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor, insira um e-mail';
+                                }
+                                if (!regex.hasMatch(value)) {
+                                  return 'Por favor, insira um e-mail válido';
+                                }
+                                return null;
+                              },
+                            ),
+                          )
+                        : Container(),
+                    widget.arguments == null || widget.arguments!.isAddMode
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: TextFormField(
+                              controller: senha,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: "Senha",
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor, insira uma senha';
+                                }
+                                if (value.length < 8) {
+                                  return 'Por favor, insira uma senha válida';
+                                }
+                                return null;
+                              },
+                            ),
+                          )
+                        : Container(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField(
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Por favor, insira o tipo de usuário';
+                              }
+                              return null;
+                            },
+                            value: user == null
+                                ? typeUser.values.first
+                                : user!.isAdmin,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Tipo de Usuário",
+                            ),
+                            items:
+                                typeUser.entries.map<DropdownMenuItem>((value) {
+                              return DropdownMenuItem(
+                                value: value.value,
+                                child: Text(value.key),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                isAdmin = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => onSubmit(context),
+                        child: Text(widget.arguments == null ||
+                                widget.arguments!.isAddMode
+                            ? "Cadastrar"
+                            : "Editar"),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: onSubmit,
-                    child: const Text("Cadastrar"),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
