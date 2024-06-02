@@ -15,5 +15,6 @@ class AppRoutes {
   static const String serviceOrderForm = "/service-order/form";
 
   // Work Route
+  static const String workRoutesList = "/work-routes";
   static const String workRouteForm = "/work-route/form";
 }
