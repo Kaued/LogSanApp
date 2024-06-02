@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -141,6 +142,8 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
     final placeForm = GlobalKey<FormState>();
     final screen = MediaQuery.of(context).size;
     final theme = Theme.of(context);
+    final double expandedWidth = screen.width - 130;
+    const double expandedHeight = 70;
 
     void onSubmit() async {
       if (serviceOrderForm.currentState!.validate() &&
@@ -386,23 +389,30 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                               const Icon(
                                 Icons.article,
                               ),
-                              Padding(
+                              Container(
+                                width: expandedWidth,
+                                height: expandedHeight,
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      "Dados da Ordem de Serviço",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                                    const Flexible(
+                                      child: Text(
+                                        "Dados da Ordem de Serviço",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                      "Informações sobre a serviço a ser prestado.",
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
+                                    Flexible(
+                                      child: Text(
+                                        "Informações sobre a serviço a ser prestado.",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -447,7 +457,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                                     "A data de vencimento da ordem de serviço",
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return "O numero de referência deve ser preenchido";
+                                    return "A data de vencimento deve ser preenchida";
                                   }
                                   return null;
                                 },
@@ -504,23 +514,30 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                               const Icon(
                                 Icons.apartment,
                               ),
-                              Padding(
+                              Container(
+                                width: expandedWidth,
+                                height: expandedHeight,
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      "Dados do Estabelecimento",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                                    const Flexible(
+                                      child: Text(
+                                        "Dados do Estabelecimento",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                      "Informações sobre o cliente do serviço.",
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
+                                    Flexible(
+                                      child: Text(
+                                        "Informações sobre o cliente do serviço.",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -623,23 +640,30 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                               const Icon(
                                 Icons.ad_units,
                               ),
-                              Padding(
+                              Container(
+                                width: expandedWidth,
+                                height: expandedHeight,
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      "Equipamentos",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                                    const Flexible(
+                                      child: Text(
+                                        "Equipamentos",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                      "Equipamentos que serão utilizados.",
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
+                                    Flexible(
+                                      child: Text(
+                                        "Equipamentos que serão utilizados.",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ],
