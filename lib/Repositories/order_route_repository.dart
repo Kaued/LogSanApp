@@ -12,4 +12,36 @@ class OrderRouteRepository {
             OrderRoute.fromJson(snapshot.data()!),
         toFirestore: (orderRoute, options) => orderRoute.toJson(),
       );
+
+  Future<List<QueryDocumentSnapshot<OrderRoute>>> getOrders(
+      {List<String>? serviceOrders}) async {
+    if (serviceOrders == null || serviceOrders.isEmpty) {
+      final orders = await _orderRouteCollection.get();
+
+      return orders.docs;
+    }
+
+    final orders = await _orderRouteCollection
+        .where("service_order_id", whereIn: serviceOrders)
+        .orderBy("date", descending: true)
+        .get();
+
+    return orders.docs;
+  }
+
+  Future<void> createOrderRoute(OrderRoute orderRoute) async {
+    await _orderRouteCollection.add(orderRoute);
+  }
+
+  Future<List<QueryDocumentSnapshot<OrderRoute>>> getByRoute(
+      String routeId) async {
+    final orders =
+        await _orderRouteCollection.where("route_id", isEqualTo: routeId).get();
+
+    return orders.docs;
+  }
+
+  Future<void> deleteOrderRoute(String id) async {
+    await _orderRouteCollection.doc(id).delete();
+  }
 }

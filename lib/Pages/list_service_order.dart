@@ -68,7 +68,6 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
   @override
   void dispose() {
     super.dispose();
-
     _debounce?.cancel();
   }
 
@@ -88,8 +87,11 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Animate(
           effects: const [FadeEffect()],
           child: inSearch
@@ -106,7 +108,12 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
                   ),
                   onChanged: _onSearchChanged,
                 )
-              : const Text("Ordens de Serviço"),
+              : Text(
+                  "Ordens de Serviço",
+                  style: theme.textTheme.titleMedium!.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
         ),
         actions: [
           IconButton(
@@ -143,32 +150,69 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
         },
         child: const Icon(Icons.add),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        child: StreamBuilder<QuerySnapshot<ServiceOrder>>(
-          stream: streamServiceOrders,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done &&
-                snapshot.connectionState != ConnectionState.active) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (!snapshot.hasData) {
-              return const Center(
-                child: Text("Não há Ordens de Serviço"),
-              );
-            }
-
-            final serviceOrders = snapshot.data!.docs;
-
-            return ServiceOrderList(
-              serviceOrders: serviceOrders,
-              typeOrders: typeOrders,
+      body: StreamBuilder<QuerySnapshot<ServiceOrder>>(
+        stream: streamServiceOrders,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done &&
+              snapshot.connectionState != ConnectionState.active) {
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    Colors.white,
+                  ],
+                  begin: const FractionalOffset(0, 0),
+                  end: const FractionalOffset(0, 1),
+                  stops: const [0, .65],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 8,
+              ),
+              child: const Card(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
             );
-          },
-        ),
+          }
+
+          if (!snapshot.hasData) {
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    Colors.white,
+                  ],
+                  begin: const FractionalOffset(0, 0),
+                  end: const FractionalOffset(0, 1),
+                  stops: const [0, .65],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 8,
+              ),
+              child: const Card(
+                child: Center(
+                  child: Text("Não há Ordens de Serviço"),
+                ),
+              ),
+            );
+          }
+
+          final serviceOrders = snapshot.data!.docs;
+
+          return ServiceOrderList(
+            serviceOrders: serviceOrders,
+            typeOrders: typeOrders,
+          );
+        },
       ),
     );
   }

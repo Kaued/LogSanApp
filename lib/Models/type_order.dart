@@ -7,7 +7,7 @@ class TypeOrder {
   TypeOrder.fromJson(Map<String, Object?> json)
       : this(
           name: json["name"]! as String,
-          value: json["value"]! as double,
+          value: (json["value"]! as num).toDouble(),
         );
 
   String name;

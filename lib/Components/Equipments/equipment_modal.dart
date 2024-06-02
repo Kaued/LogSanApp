@@ -137,7 +137,8 @@ class _EquipmentModalState extends State<EquipmentModal> {
                                 validator: validateRequiredField,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8),
@@ -147,7 +148,7 @@ class _EquipmentModalState extends State<EquipmentModal> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
                                         padding: const EdgeInsets.symmetric(
-                                          vertical: 20,
+                                          vertical: 8,
                                           horizontal: 20,
                                         ),
                                       ),
@@ -179,14 +180,14 @@ class _EquipmentModalState extends State<EquipmentModal> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green[600],
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
+                                        vertical: 8,
                                         horizontal: 20,
                                       ),
                                     ),
                                     child: Row(
                                       children: [
                                         const Icon(
-                                          Icons.save,
+                                          Icons.check,
                                           color: Colors.white,
                                         ),
                                         Padding(

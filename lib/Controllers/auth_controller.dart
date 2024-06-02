@@ -17,4 +17,8 @@ class AuthController {
   Future<bool> logout() async {
     return await _authRepository.logout();
   }
+
+  bool isAuthenticated() {
+    return _authRepository.isAuthenticated();
+  }
 }

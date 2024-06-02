@@ -1,13 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Controllers/layout_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
 import 'package:logsan_app/Pages/work_routes_list.dart';
+import 'package:logsan_app/Pages/work_routes_form.dart';
 import 'package:logsan_app/Repositories/auth_repository.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
@@ -68,21 +70,26 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-  final AuthRepository authRepository = AuthRepository.instance;
+  final LayoutController _layoutController = LayoutController.instance;
+  String initialPage = AppRoutes.login;
   bool _checkConfiguration() => true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_checkConfiguration()) {
-        if (!authRepository.isAuthenticated()) {
-          print(FirebaseAuth.instance.currentUser);
+    if (!_layoutController.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
         }
-      }
+      });
+
+      return;
+    }
+
+    setState(() {
+      initialPage = AppRoutes.home;
     });
   }
 
@@ -92,7 +99,7 @@ class _LayoutState extends State<Layout> {
       child: Scaffold(
         body: Navigator(
           key: navigatorKey,
-          initialRoute: AppRoutes.login,
+          initialRoute: initialPage,
           onGenerateRoute: (routeSetting) => PageRouteBuilder(
             pageBuilder: (ctx, ani, ani1) {
               return getCurrentPage(
@@ -132,6 +139,9 @@ class _LayoutState extends State<Layout> {
         );
       case AppRoutes.workRoutesList:
         return const WorkRoutesList();
+      case AppRoutes.workRouteForm:
+        return WorkRouteForm(
+            arguments: arguments as FormArguments<WorkRoute?>?);
       default:
         return _buildHomeScreen(context);
     }

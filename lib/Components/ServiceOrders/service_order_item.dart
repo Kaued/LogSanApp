@@ -33,119 +33,125 @@ class ServiceOrderItem extends StatelessWidget {
         arguments: FormArguments<ServiceOrder>(
             isAddMode: false, values: serviceOrder, id: id),
       ),
-      child: Dismissible(
-        key: Key(serviceOrder.referenceNumber),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          decoration: BoxDecoration(
-              color: Colors.red, borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.all(20),
-          alignment: Alignment.centerRight,
-          child: const Icon(
-            Icons.delete,
-            color: Colors.white,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 4,
+        child: Dismissible(
+          key: Key(serviceOrder.referenceNumber),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            decoration: BoxDecoration(
+                color: Colors.red, borderRadius: BorderRadius.circular(8)),
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.centerRight,
+            child: const Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
           ),
-        ),
-        onDismissed: (direction) => deletedFunction(id),
-        confirmDismiss: (direction) async {
-          return await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  actionsAlignment: MainAxisAlignment.spaceBetween,
-                  titlePadding: const EdgeInsets.all(0),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  title: Container(
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(8)),
-                      color: theme.colorScheme.secondary,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 16),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.delete, color: Colors.white),
-                        Flexible(
-                          flex: 3,
-                          fit: FlexFit.tight,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Text(
-                              "Tem certeza?",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+          onDismissed: (direction) => deletedFunction(id),
+          confirmDismiss: (direction) async {
+            return await showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    actionsAlignment: MainAxisAlignment.spaceBetween,
+                    titlePadding: const EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    title: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8)),
+                        color: theme.colorScheme.secondary,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.white),
+                          Flexible(
+                            flex: 3,
+                            fit: FlexFit.tight,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                "Tem certeza?",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  content: Text(
-                    "A ordem de serviço ${serviceOrder.referenceNumber} será apagada e não poderá ser mais utilizada. Deseja continuar?",
-                    softWrap: true,
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 12),
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
+                        ],
                       ),
-                      child: const Text("Cancelar"),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        textStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.primary,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 12),
-                        backgroundColor: theme.colorScheme.primary,
+                    content: Text(
+                      "Tem certeza que deseja apagar a ordem de serviço ${serviceOrder.referenceNumber}?",
+                      softWrap: true,
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                      child: const Text("Confirmar"),
                     ),
-                  ],
-                );
-              });
-        },
-        child: Card(
-          color: Colors.grey[200],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 3,
-          child: Padding(
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("Cancelar"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: theme.colorScheme.primary,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
+                          backgroundColor: theme.colorScheme.primary,
+                        ),
+                        child: const Text("Confirmar"),
+                      ),
+                    ],
+                  );
+                });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8), color: Colors.white),
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             child: ListTile(
               leading: SizedBox(
-                width: 90,
+                width: 58,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Icon(
                       iconType,
-                      size: 32,
+                      size: 24,
                       color: theme.colorScheme.primary,
                     ),
                     Text(
                       typeOrder.name,
-                      style: theme.textTheme.labelSmall,
+                      style: theme.textTheme.labelSmall!.copyWith(
+                        fontSize: 6,
+                      ),
                     )
                   ],
                 ),
@@ -153,7 +159,7 @@ class ServiceOrderItem extends StatelessWidget {
               title: Text(
                 serviceOrder.referenceNumber,
                 style: theme.textTheme.titleLarge!.copyWith(
-                  fontSize: 24,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -161,7 +167,7 @@ class ServiceOrderItem extends StatelessWidget {
                 " ${dateBr.format(serviceOrder.maxDate.toDate())}",
                 style: theme.textTheme.titleMedium!.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: 10,
                   color:
                       serviceOrder.maxDate.toDate().compareTo(DateTime.now()) <
                               0
@@ -169,7 +175,13 @@ class ServiceOrderItem extends StatelessWidget {
                           : Colors.grey[600],
                 ),
               ),
-              subtitle: Text(serviceOrder.placeName),
+              subtitle: Text(
+                serviceOrder.placeName,
+                style: theme.textTheme.titleLarge!.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
         ),

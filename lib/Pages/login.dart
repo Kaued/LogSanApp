@@ -14,6 +14,20 @@ class _LoginState extends State<Login> {
   final txtPassword = TextEditingController();
   bool _obscureText = true;
   final authController = AuthController.instance;
+  bool _checkConfiguration() => true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (authController.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
+        }
+      });
+    }
+  }
 
   Future<void> _login(context) async {
     try {
