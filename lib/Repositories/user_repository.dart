@@ -90,12 +90,6 @@ class UserRepository {
     return _userCollection.snapshots();
   }
 
-  Future<List<QueryDocumentSnapshot<Person>>> getUsers() async {
-    var users = await _userCollection.get();
-
-    return users.docs;
-  }
-
   Future<Person> getById(String id) async {
     var user = await firestore.collection('users').doc(id).get();
 

@@ -8,6 +8,8 @@ import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:intl/intl.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
+import 'package:logsan_app/Utils/app_routes.dart';
 
 class WorkRoutesList extends StatefulWidget {
   const WorkRoutesList({super.key});
@@ -85,16 +87,14 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Animate(
-          child: inSearch
-              ? WorkRoutesSearch(field: field, onSearch: _onSearchChanged)
-              : Text(
-                  "Rotas de Serviços",
-                  style: theme.textTheme.titleMedium!.copyWith(
-                    color: Colors.white,
-                  ),
+        title: inSearch
+            ? WorkRoutesSearch(field: field, onSearch: _onSearchChanged)
+            : Text(
+                "Rotas de Serviços",
+                style: theme.textTheme.titleMedium!.copyWith(
+                  color: Colors.white,
                 ),
-        ),
+              ),
         actions: [
           IconButton(
             onPressed: toggleSearch,
@@ -121,6 +121,16 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.workRouteForm,
+            arguments: FormArguments<WorkRoute?>(isAddMode: true),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -199,7 +209,17 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
                             controller.delete(workRouteData[index].id);
                           },
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.workRouteForm,
+                                arguments: FormArguments<WorkRoute?>(
+                                  isAddMode: false,
+                                  values: workRouteData[index].data(),
+                                  id: workRouteData[index].id,
+                                ),
+                              );
+                            },
                             child: Card(
                               color: Colors.grey[200],
                               shape: RoundedRectangleBorder(
@@ -207,7 +227,7 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
                               ),
                               elevation: 3,
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: 8,
                                   horizontal: 4,
                                 ),
@@ -218,13 +238,13 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         workRouteData[index].data().finish
-                                            ? Icon(
+                                            ? const Icon(
                                                 Icons
                                                     .check_circle_outline_outlined,
                                                 size: 32,
                                                 color: Colors.green,
                                               )
-                                            : Icon(
+                                            : const Icon(
                                                 Icons.watch_later_outlined,
                                                 size: 32,
                                                 color: Colors.grey,
@@ -243,8 +263,8 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
                                   ),
                                   title: Text(
                                     routeUser.data().name,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(dateFormat.format(
                                       workRouteData[index]

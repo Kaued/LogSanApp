@@ -24,6 +24,7 @@ class _WorkRoutesSearchState extends State<WorkRoutesSearch> {
   final Map<String, bool> status = {"Pendente": false, "Finalizado": true};
   bool valueStatus = false;
 
+  @override
   void initState() {
     super.initState();
     list();
@@ -48,6 +49,8 @@ class _WorkRoutesSearchState extends State<WorkRoutesSearch> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     Future<void> selectDate() async {
       DateTime? date = await showDatePicker(
         context: context,
@@ -83,6 +86,25 @@ class _WorkRoutesSearchState extends State<WorkRoutesSearch> {
               .toLowerCase()
               .contains(value.text.toLowerCase()));
         },
+        fieldViewBuilder:
+            (context, textEditingController, focusNode, onFieldSubmitted) =>
+                TextFormField(
+          controller: textEditingController,
+          focusNode: focusNode,
+          onFieldSubmitted: (value) {
+            onFieldSubmitted();
+          },
+          decoration: const InputDecoration(
+            hintText: "Pesquisar",
+            fillColor: Colors.white,
+            hintStyle: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
         // Para cada opção na lista
         displayStringForOption: displayOptions,
         onSelected: onSelectUser,
@@ -106,11 +128,11 @@ class _WorkRoutesSearchState extends State<WorkRoutesSearch> {
     } else if (widget.field == "finish") {
       return ButtonTheme(
         alignedDropdown: true,
-        child: DropdownButtonHideUnderline(
+        child: SizedBox(
+          width: double.infinity,
           child: DropdownButton<bool>(
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: const TextStyle(color: Colors.white),
+            dropdownColor: theme.colorScheme.primary,
             value: valueStatus,
             items: status.entries
                 .map((e) => DropdownMenuItem<bool>(
