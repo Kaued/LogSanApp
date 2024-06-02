@@ -12,4 +12,57 @@ class WorkRouteRepository {
             WorkRoute.fromJson(snapshot.data()!),
         toFirestore: (workRoute, options) => workRoute.toJson(),
       );
+
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutes() {
+    return _workRouteCollection
+        .orderBy("to_date", descending: true)
+        .where("deleted", isEqualTo: false)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyUser({String value = ""}) {
+    if (value.isNotEmpty) {
+      return _workRouteCollection
+          .where("uid", isEqualTo: value)
+          .where("deleted", isEqualTo: false)
+          .snapshots();
+    }
+    return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
+  }
+
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyDate({Timestamp? value}) {
+    if (value != null) {
+      value.toDate();
+
+      Timestamp initalOfDay = Timestamp.fromDate(
+          DateTime(value.toDate().year, value.toDate().month));
+
+      Timestamp endOfDay = Timestamp.fromDate(
+          DateTime(value.toDate().year, value.toDate().month, 23, 59, 59));
+
+      return _workRouteCollection
+          .where("to_date", isGreaterThan: initalOfDay, isLessThan: endOfDay)
+          .where("deleted", isEqualTo: false)
+          .snapshots();
+    }
+    return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
+  }
+
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyStatus({String value = ""}) {
+    if (value.isNotEmpty) {
+      return _workRouteCollection
+          .where("finish", isEqualTo: value == '1' ? true : false)
+          .where("deleted", isEqualTo: false)
+          .snapshots();
+    }
+    return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
+  }
+
+  Future<bool> delete(String id) async {
+    await _workRouteCollection.doc(id).update({
+      "deleted": true,
+    });
+
+    return true;
+  }
 }

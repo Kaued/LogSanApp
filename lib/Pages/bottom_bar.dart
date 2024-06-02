@@ -18,7 +18,7 @@ class _BottomBarState extends State<BottomBar> {
   var pages = {
     0: "",
     1: AppRoutes.userList,
-    2: "",
+    2: AppRoutes.workRoutesList,
     3: AppRoutes.listServiceOrder,
     4: "",
   };
