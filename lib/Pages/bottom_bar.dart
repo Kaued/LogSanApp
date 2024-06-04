@@ -34,7 +34,7 @@ class _BottomBarState extends State<BottomBar> {
           ? {
               0: AppRoutes.home,
               1: AppRoutes.userList,
-              2: AppRoutes.serviceOrderForm,
+              2: AppRoutes.workRoutesList,
               3: AppRoutes.listServiceOrder,
               4: AppRoutes.myAccont,
             }
