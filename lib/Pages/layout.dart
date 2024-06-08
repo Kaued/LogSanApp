@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Components/Maps/route_map.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
@@ -104,7 +105,7 @@ class _LayoutState extends State<Layout> {
       case AppRoutes.myAccont:
         return MyAccount(logout: logout);
       case AppRoutes.workRoutesList:
-        return const WorkRoutesList();
+        return const RouteMap();
       case AppRoutes.workRouteForm:
         return WorkRouteForm(
             arguments: arguments as FormArguments<WorkRoute?>?);

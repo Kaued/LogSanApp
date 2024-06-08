@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
 
 class ServiceOrder {
@@ -11,6 +14,7 @@ class ServiceOrder {
     required this.typeOrderId,
     required this.maxDate,
     required this.address,
+    required this.geolocation,
     this.removeEquipment,
     this.installEquipment,
     this.deleted = false,
@@ -34,6 +38,7 @@ class ServiceOrder {
             street: json["street"]! as String,
           ),
           maxDate: json["maxDate"]! as Timestamp,
+          geolocation: json["geolocation"]! as GeoPoint,
           installEquipment: json["installEquipment"] as String?,
           removeEquipment: json["removeEquipment"] as String?,
         );
@@ -48,6 +53,7 @@ class ServiceOrder {
   Timestamp maxDate;
   String? installEquipment;
   String? removeEquipment;
+  GeoPoint geolocation;
   bool deleted;
 
   Map<String, Object?> toJson() {
@@ -66,6 +72,7 @@ class ServiceOrder {
       "number": address.number,
       "state": address.state,
       "street": address.street,
+      "geolocation": geolocation,
       "installEquipment": installEquipment,
       "removeEquipment": removeEquipment,
       "deleted": deleted,
