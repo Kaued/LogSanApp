@@ -43,7 +43,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
     referenceNumber: "",
     responsible: "",
     typeOrderId: "",
-    geolocation: const GeoPoint(0, 0),
+    geoLocation: const GeoPoint(0, 0),
     maxDate: Timestamp.now(),
     address: Address(
         cep: "",
@@ -224,8 +224,9 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
       showModalBottomSheet(
         context: context,
         builder: (context) => AddressModal(
-          onSaved: (value) => setState(() {
-            serviceOrder.address = value;
+          onSaved: (address, geoLocation) => setState(() {
+            serviceOrder.address = address;
+            serviceOrder.geoLocation = geoLocation;
           }),
           formValues: serviceOrder.address,
         ),

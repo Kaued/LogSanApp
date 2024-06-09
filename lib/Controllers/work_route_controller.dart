@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:logsan_app/Class/route_geo_location.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
+import 'package:logsan_app/Repositories/route_calculate_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
 import 'package:logsan_app/Repositories/type_order_repository.dart';
@@ -20,6 +23,8 @@ class WorkRouteController {
   final ServiceOrderRepository _serviceOrderRepository =
       ServiceOrderRepository.instance;
   final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
+  final RouteCalculateRepository _routeCalculateRepository =
+      RouteCalculateRepository.instance;
 
   static WorkRouteController instance = WorkRouteController._();
 
@@ -191,5 +196,34 @@ class WorkRouteController {
     }
 
     return;
+  }
+
+  Future<RouteGeoLocation> calculateRoute(
+      {required String id, required GeoPoint start}) async {
+    final workRoute = await _workRouteRepository.findWorkRoute(id);
+    final ordersInRoute = await _orderRouteRepository.getByRoute(workRoute.id);
+
+    final serviceOrdersId =
+        ordersInRoute.map((e) => e.data().serviceOrderId).toList();
+
+    final serviceOrder = await _serviceOrderRepository.getListServiceOrderById(
+        ids: serviceOrdersId);
+
+    final List<GeoPoint> points =
+        serviceOrder.map((e) => e.data().geoLocation).toList();
+
+    const GeoPoint end = GeoPoint(-20.800379, -49.3579227);
+
+    try {
+      final route = await _routeCalculateRepository.calculateRoute(
+        points: points,
+        start: start,
+        end: end,
+      );
+        
+      return route;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

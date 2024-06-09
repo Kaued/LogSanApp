@@ -14,7 +14,7 @@ class ServiceOrder {
     required this.typeOrderId,
     required this.maxDate,
     required this.address,
-    required this.geolocation,
+    required this.geoLocation,
     this.removeEquipment,
     this.installEquipment,
     this.deleted = false,
@@ -38,7 +38,7 @@ class ServiceOrder {
             street: json["street"]! as String,
           ),
           maxDate: json["maxDate"]! as Timestamp,
-          geolocation: json["geolocation"]! as GeoPoint,
+          geoLocation: json["geolocation"]! as GeoPoint,
           installEquipment: json["installEquipment"] as String?,
           removeEquipment: json["removeEquipment"] as String?,
         );
@@ -53,7 +53,7 @@ class ServiceOrder {
   Timestamp maxDate;
   String? installEquipment;
   String? removeEquipment;
-  GeoPoint geolocation;
+  GeoPoint geoLocation;
   bool deleted;
 
   Map<String, Object?> toJson() {
@@ -72,7 +72,7 @@ class ServiceOrder {
       "number": address.number,
       "state": address.state,
       "street": address.street,
-      "geolocation": geolocation,
+      "geolocation": geoLocation,
       "installEquipment": installEquipment,
       "removeEquipment": removeEquipment,
       "deleted": deleted,

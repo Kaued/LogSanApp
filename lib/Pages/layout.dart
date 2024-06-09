@@ -33,7 +33,7 @@ class _LayoutState extends State<Layout> {
   void initState() {
     super.initState();
 
-    if (!authController.isAuthenticated() || authController.user.uid.isEmpty) {
+    if (!authController.isAuthenticated()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
@@ -43,8 +43,26 @@ class _LayoutState extends State<Layout> {
       return;
     }
 
+    if (authController.user.uid.isEmpty) {
+      try {
+        getUserData();
+      } catch (e) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      }
+
+      return;
+    }
+
     setState(() {
-      initialPage = AppRoutes.home;
+      initialPage = AppRoutes.workRoutesList;
+    });
+  }
+
+  void getUserData() async {
+    await authController.setAuthenticatedUser();
+
+    setState(() {
+      initialPage = AppRoutes.workRoutesList;
     });
   }
 

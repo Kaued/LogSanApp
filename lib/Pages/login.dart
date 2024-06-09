@@ -20,13 +20,13 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
 
-    // if (authController.isAuthenticated()) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     if (_checkConfiguration()) {
-    //       Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
-    //     }
-    //   });
-    // }
+    if (authController.isAuthenticated()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_checkConfiguration()) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
+        }
+      });
+    }
   }
 
   Future<void> _login(context) async {
