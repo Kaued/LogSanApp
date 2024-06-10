@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logsan_app/Class/route_geo_location.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
+import 'package:logsan_app/Utils/alerts.dart';
 
 class RouteMap extends StatefulWidget {
   const RouteMap({super.key});
@@ -15,9 +17,12 @@ class RouteMap extends StatefulWidget {
 }
 
 class _RouteMapState extends State<RouteMap> {
-  final LatLng initialLocation = const LatLng(-20.8202, -49.3797);
+  LatLng? initialLocation;
   final WorkRouteController controller = WorkRouteController.instance;
   final String id = "YySHTEGM5fqisvHnImwV";
+
+  StreamSubscription? subscription;
+
   RouteGeoLocation? route;
   List<Marker> markers = [];
   List<LatLng> points = [];
@@ -26,13 +31,59 @@ class _RouteMapState extends State<RouteMap> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getRoute();
+    load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription?.cancel();
+  }
+
+  Future<void> load() async {
+    await getLocation();
+    await getRoute();
+  }
+
+  Future<void> getLocation() async {
+    try {
+      final location = await controller.getLocation();
+      final streamPosition = await controller.getLocationStream();
+
+      if (mounted) {
+        setState(() {
+          initialLocation = LatLng(location.latitude, location.longitude);
+        });
+
+        streamPosition.listen((event) {
+          if (mounted) {
+            setState(() {
+              initialLocation = LatLng(event.latitude, event.longitude);
+            });
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          Alerts.errorMessage(
+            context: context,
+            message: e.toString(),
+            title: "Erro ao obter localização",
+          ),
+        );
+      }
+    }
   }
 
   Future<void> getRoute() async {
+    if (initialLocation == null) {
+      return;
+    }
+
     final routeRequest = await controller.calculateRoute(
         id: id,
-        start: GeoPoint(initialLocation.latitude, initialLocation.longitude));
+        start: GeoPoint(initialLocation!.latitude, initialLocation!.longitude));
 
     final List<Marker> makersRoute = routeRequest.waypoints.map((e) {
       final marker = Marker(
@@ -51,20 +102,29 @@ class _RouteMapState extends State<RouteMap> {
 
     makersRoute.removeAt(0);
 
-    setState(() {
-      points = routeRequest.coordinates;
-      markers = makersRoute;
-      route = routeRequest;
-    });
+    if (mounted) {
+      setState(() {
+        points = routeRequest.coordinates;
+        markers = makersRoute;
+        route = routeRequest;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FlutterMap(
-        options: const MapOptions(
+        options: MapOptions(
           initialZoom: 15,
-          initialCenter: LatLng(-20.8202, -49.3797),
+          initialCenter: initialLocation ?? const LatLng(-20.8202, -49.3797),
+          interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.drag |
+                  InteractiveFlag.pinchZoom |
+                  InteractiveFlag.doubleTapDragZoom |
+                  InteractiveFlag.scrollWheelZoom |
+                  InteractiveFlag.pinchMove |
+                  InteractiveFlag.scrollWheelZoom),
         ),
         children: [
           TileLayer(
@@ -81,16 +141,17 @@ class _RouteMapState extends State<RouteMap> {
             ],
           ),
           MarkerLayer(markers: [
-            const Marker(
-              width: 80.0,
-              height: 80.0,
-              point: LatLng(-20.8202, -49.3797),
-              child: Icon(
-                Icons.location_on,
-                color: Colors.green,
-                size: 45.0,
+            if (initialLocation != null)
+              Marker(
+                width: 80.0,
+                height: 80.0,
+                point: initialLocation!,
+                child: const Icon(
+                  Icons.circle,
+                  color: Colors.green,
+                  size: 45.0,
+                ),
               ),
-            ),
             ...markers
           ]),
         ],

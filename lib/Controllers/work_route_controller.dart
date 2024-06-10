@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logsan_app/Class/route_geo_location.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
@@ -220,10 +221,77 @@ class WorkRouteController {
         start: start,
         end: end,
       );
-        
+
       return route;
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Localização está desabilitado.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Permissão de localização negada.');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+          'Permissão de localização negada para sempre, não podemos solicitar permissão.');
+    }
+    return true;
+  }
+
+  Future<Position> getLocation() async {
+    try {
+      final bool permission = await _handleLocationPermission();
+
+      if (!permission) {
+        throw Exception("Permissão de localização negada");
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    try {
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      return position;
+    } catch (e) {
+      throw Exception("Erro ao obter localização");
+    }
+  }
+
+  Future<Stream<Position>> getLocationStream() async {
+    try {
+      final bool permission = await _handleLocationPermission();
+
+      if (!permission) {
+        throw Exception("Permissão de localização negada");
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    try {
+      const LocationSettings options = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 2,
+      );
+      final position = Geolocator.getPositionStream(locationSettings: options);
+
+      return position;
+    } catch (e) {
+      throw Exception("Erro ao obter localização");
     }
   }
 }

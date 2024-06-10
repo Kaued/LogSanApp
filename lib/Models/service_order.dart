@@ -1,7 +1,4 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
 
 class ServiceOrder {
