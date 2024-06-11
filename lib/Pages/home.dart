@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
 
 class Home extends StatefulWidget {
@@ -18,10 +19,13 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(
-          "Início",
-          style: theme.textTheme.titleMedium!.copyWith(
-            color: Colors.white,
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Text(
+            "Início",
+            style: theme.textTheme.titleMedium!.copyWith(
+              color: Colors.white,
+            ),
           ),
         ),
         automaticallyImplyLeading: false,

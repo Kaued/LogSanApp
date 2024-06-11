@@ -35,9 +35,10 @@ class WorkRouteController {
     return await _userRepository.getUsers();
   }
 
-  Stream<QuerySnapshot<WorkRoute>> getWorkRoutes(
-      {String? field, String value = ""}) {
-    print(field);
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutes({
+    String? field,
+    String value = "",
+  }) {
     if (value.isNotEmpty && field != null) {
       if (field == "finish") {
         final orders = _workRouteRepository.getWorkRoutesbyStatus(

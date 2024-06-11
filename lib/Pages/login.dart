@@ -20,7 +20,7 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
 
-    if (authController.isAuthenticated()) {
+    if (authController.isAuthenticated() && authController.user.uid.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.layout);

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
@@ -45,10 +46,13 @@ class _UserListState extends State<UserList> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(
-          "Usuários",
-          style: theme.textTheme.titleMedium!.copyWith(
-            color: Colors.white,
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Text(
+            "Usuários",
+            style: theme.textTheme.titleMedium!.copyWith(
+              color: Colors.white,
+            ),
           ),
         ),
         automaticallyImplyLeading: false,
