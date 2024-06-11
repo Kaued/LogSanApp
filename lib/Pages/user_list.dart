@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
@@ -23,6 +24,7 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   final controller = UserController.instance;
   Stream<QuerySnapshot<Person>> streamUser = const Stream.empty();
+  AuthController authController = AuthController.instance;
 
   @override
   void initState() {
@@ -103,7 +105,7 @@ class _UserListState extends State<UserList> {
                   );
                 }
 
-                final users = snapshot.data!.docs;
+                final users = snapshot.data!.docs.where((element) => element.data().uid != authController.user.uid).toList();
 
                 return ListView.builder(
                   itemCount: users.length,

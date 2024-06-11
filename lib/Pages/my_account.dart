@@ -58,13 +58,19 @@ class _MyAccountState extends State<MyAccount> {
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      authController.user.name,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Editar Perfil'),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
