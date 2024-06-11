@@ -25,6 +25,7 @@ class _RouteMapState extends State<RouteMap> {
 
   RouteGeoLocation? route;
   List<Marker> markers = [];
+  List<LatLng> pointsOriginal = [];
   List<LatLng> points = [];
 
   @override
@@ -57,8 +58,14 @@ class _RouteMapState extends State<RouteMap> {
 
         streamPosition.listen((event) {
           if (mounted) {
+            final newLocation = LatLng(event.latitude, event.longitude);
+
+            final newPoints = controller.getPointsByLocationUser(
+                points: [...points], userLocation: newLocation);
+                
             setState(() {
-              initialLocation = LatLng(event.latitude, event.longitude);
+              points = newPoints;
+              initialLocation = newLocation;
             });
           }
         });
@@ -105,6 +112,7 @@ class _RouteMapState extends State<RouteMap> {
     if (mounted) {
       setState(() {
         points = routeRequest.coordinates;
+        pointsOriginal = routeRequest.coordinates;
         markers = makersRoute;
         route = routeRequest;
       });
@@ -131,15 +139,16 @@ class _RouteMapState extends State<RouteMap> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'dev.fleatflet.flutter_map.example',
           ),
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: points,
-                strokeWidth: 5.0,
-                color: Colors.blue,
-              ),
-            ],
-          ),
+          if (initialLocation != null)
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: [initialLocation!, ...points],
+                  strokeWidth: 5.0,
+                  color: Colors.blue,
+                ),
+              ],
+            ),
           MarkerLayer(markers: [
             if (initialLocation != null)
               Marker(

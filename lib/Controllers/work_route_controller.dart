@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:logsan_app/Class/route_geo_location.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
@@ -269,6 +272,59 @@ class WorkRouteController {
     } catch (e) {
       throw Exception("Erro ao obter localização");
     }
+  }
+
+  List<LatLng> getPointsByLocationUser(
+      {required LatLng userLocation, required List<LatLng> points}) {
+    int? removeIndex;
+    for (int i = 0; i < points.length; i++) {
+      if (i == 0) {
+        final firtsPoint = points[i];
+        final secondLocation = points[i + 1];
+        const distance = 10.0;
+
+        final firstLatitudeWithDistance =
+            firtsPoint.latitude + distance / 111320.0;
+        final secondLatitudeWithDistance =
+            secondLocation.latitude + distance / 111320.0;
+
+        final firstLongitudeWithDistance =
+            distance / (111320.0 * cos(firtsPoint.latitude * pi / 180));
+        final secondLongitudeWithDistance =
+            distance / (111320.0 * cos(secondLocation.latitude * pi / 180));
+
+        final isBeforeLat = firtsPoint.latitude > secondLocation.latitude
+            ? userLocation.latitude > secondLatitudeWithDistance
+            : userLocation.latitude < secondLatitudeWithDistance;
+
+        final isAfterLat = firtsPoint.latitude > secondLocation.latitude
+            ? userLocation.latitude < firstLatitudeWithDistance
+            : userLocation.latitude > firstLatitudeWithDistance;
+
+        final isBeforeLon = firtsPoint.longitude > secondLocation.longitude
+            ? userLocation.longitude > secondLongitudeWithDistance
+            : userLocation.longitude < secondLongitudeWithDistance;
+
+        final isAfterLon = firtsPoint.longitude > secondLocation.longitude
+            ? userLocation.longitude < secondLongitudeWithDistance
+            : userLocation.longitude > secondLongitudeWithDistance;
+
+        if (isAfterLat && isBeforeLat && isBeforeLon && isAfterLon) {
+          removeIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (removeIndex != null) {
+      for (int i = 0; i <= removeIndex; i++) {
+        points.removeAt(i);
+      }
+
+      points.insert(0, userLocation);
+    }
+
+    return points;
   }
 
   Future<Stream<Position>> getLocationStream() async {
