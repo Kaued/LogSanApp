@@ -110,4 +110,25 @@ class UserRepository {
       "isDisabled": user.docs.first.get("isDisabled"),
     });
   }
+
+  Future<String> getIdByUid(String uid) async {
+    var user = await firestore
+        .collection('users')
+        .where(
+          "uid",
+          isEqualTo: uid,
+        )
+        .get();
+
+    return user.docs.first.id;
+  }
+
+  Future<QuerySnapshot<Person>> getUserId(String uid) async {
+    final users = await _userCollection
+    .where('uid', isEqualTo: uid)
+    .limit(1)
+    .get();
+
+    return users;
+  }
 }

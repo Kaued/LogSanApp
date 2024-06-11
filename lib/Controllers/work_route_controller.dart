@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
+import 'package:logsan_app/Repositories/auth_repository.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
@@ -12,6 +14,7 @@ import 'package:logsan_app/Repositories/user_repository.dart';
 import 'package:logsan_app/Repositories/work_route_repository.dart';
 
 class WorkRouteController {
+  final AuthRepository _authRepository = AuthRepository.instance;
   final WorkRouteRepository _workRouteRepository = WorkRouteRepository.instance;
   final OrderRouteRepository _orderRouteRepository =
       OrderRouteRepository.instance;
@@ -30,24 +33,41 @@ class WorkRouteController {
     "Data": "to_date",
     "Status": "finish",
   };
+  final Map<String, String> columnsUser = {
+    "Data": "to_date",
+    "Status": "finish",
+  };
 
   Future<List<QueryDocumentSnapshot<Person>>> getUsers() async {
     return await _userRepository.getUsers();
   }
 
+  Future<Map<String, String>> getPerson() async {
+    User user = _authRepository.getAuthenticatedUser();
+    QuerySnapshot<Person> dataUser = await _userRepository.getUserId(user.uid);
+
+    return {
+      'id': dataUser.docs[0].id.toString(),
+      'isAdmin': dataUser.docs[0].data().isAdmin.toString()
+    };
+  }
+
   Stream<QuerySnapshot<WorkRoute>> getWorkRoutes(
-      {String? field, String value = ""}) {
-    print(field);
+      {String? field, String value = "", bool admin = true, String uid = ""}) {
     if (value.isNotEmpty && field != null) {
       if (field == "finish") {
         final orders = _workRouteRepository.getWorkRoutesbyStatus(
           value: value,
+          admin: admin,
+          uid: uid,
         );
         return orders;
       } else if (field == "to_date") {
         Timestamp date = Timestamp.fromDate(DateTime.parse(value));
         final orders = _workRouteRepository.getWorkRoutesbyDate(
           value: date,
+          admin: admin,
+          uid: uid,
         );
         return orders;
       } else if (field == "uid") {
@@ -62,8 +82,24 @@ class WorkRouteController {
     return orders;
   }
 
+  Future<Stream<QuerySnapshot<WorkRoute>>> getMyWorkRoutes() async {
+    if (!_authRepository.isAuthenticated()) {
+      throw Exception("Usuário não autenticado");
+    }
+
+    User user = _authRepository.getAuthenticatedUser();
+
+    String dataUser = await _userRepository.getIdByUid(user.uid);
+
+    return _workRouteRepository.getWorkRoutesbyUser(value: dataUser);
+  }
+
   Map<String, String> getColumns() {
     return columns;
+  }
+
+  Map<String, String> getColumnsUser() {
+    return columnsUser;
   }
 
   Future<bool> delete(String id) async {

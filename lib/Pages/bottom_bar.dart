@@ -41,6 +41,7 @@ class _BottomBarState extends State<BottomBar> {
           : {
               0: AppRoutes.home,
               1: AppRoutes.myAccont,
+              2: AppRoutes.workRoutesListUser,
             };
     });
   }
@@ -106,6 +107,12 @@ class _BottomBarState extends State<BottomBar> {
                 BottomNavigationBarItem(
                   icon: Icon(
                     Icons.person,
+                  ),
+                  label: "",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.route,
                   ),
                   label: "",
                 ),

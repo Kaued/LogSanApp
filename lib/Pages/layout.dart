@@ -10,6 +10,7 @@ import 'package:logsan_app/Pages/my_account.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
+import 'package:logsan_app/Pages/work_routes_user.dart';
 import 'package:logsan_app/Pages/work_routes_form.dart';
 import 'package:logsan_app/Pages/work_routes_list.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
@@ -108,6 +109,8 @@ class _LayoutState extends State<Layout> {
       case AppRoutes.workRouteForm:
         return WorkRouteForm(
             arguments: arguments as FormArguments<WorkRoute?>?);
+      case AppRoutes.workRoutesListUser:
+        return const WorkRoutesListUser();
       default:
         return const Home();
     }

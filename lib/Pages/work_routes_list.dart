@@ -181,7 +181,6 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
                 child: ListView.builder(
                   itemCount: workRouteData.length,
                   itemBuilder: (context, index) {
-                    print(workRouteData[index].data());
                     QueryDocumentSnapshot<Person>? routeUser = user.firstWhere(
                       (element) =>
                           element.id == workRouteData[index].data().uid,

@@ -18,4 +18,7 @@ class AppRoutes {
   // Work Route
   static const String workRoutesList = "/work-routes";
   static const String workRouteForm = "/work-route/form";
+
+  // User Work Route
+  static const String workRoutesListUser = "/user/my/work-routes";
 }

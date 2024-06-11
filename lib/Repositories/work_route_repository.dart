@@ -25,34 +25,49 @@ class WorkRouteRepository {
       return _workRouteCollection
           .where("uid", isEqualTo: value)
           .where("deleted", isEqualTo: false)
+          .orderBy("to_date", descending: true)
           .snapshots();
     }
     return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
   }
 
-  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyDate({Timestamp? value}) {
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyDate(
+      {Timestamp? value, bool admin = true, String uid = ""}) {
     if (value != null) {
-      value.toDate();
-
-      Timestamp initalOfDay = Timestamp.fromDate(
-          DateTime(value.toDate().year, value.toDate().month));
-
-      Timestamp endOfDay = Timestamp.fromDate(
-          DateTime(value.toDate().year, value.toDate().month, 23, 59, 59));
-
+      Timestamp initalOfDay = Timestamp.fromDate(DateTime(
+          value.toDate().year, value.toDate().month, value.toDate().day));
+      Timestamp endOfDay = Timestamp.fromDate(DateTime(value.toDate().year,
+          value.toDate().month, value.toDate().day, 23, 59, 59));
+      if (admin) {
+        return _workRouteCollection
+            .where("to_date", isGreaterThanOrEqualTo: initalOfDay)
+            .where("to_date", isLessThanOrEqualTo: endOfDay)
+            .where("deleted", isEqualTo: false)
+            .snapshots();
+      }
       return _workRouteCollection
-          .where("to_date", isGreaterThan: initalOfDay, isLessThan: endOfDay)
+          .where("to_date", isGreaterThanOrEqualTo: initalOfDay)
+          .where("to_date", isLessThanOrEqualTo: endOfDay)
           .where("deleted", isEqualTo: false)
+          .where("uid", isEqualTo: uid)
           .snapshots();
     }
     return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
   }
 
-  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyStatus({String value = ""}) {
+  Stream<QuerySnapshot<WorkRoute>> getWorkRoutesbyStatus(
+      {String value = "", bool admin = true, String uid = ""}) {
     if (value.isNotEmpty) {
+      if (admin) {
+        return _workRouteCollection
+            .where("finish", isEqualTo: value == '1' ? true : false)
+            .where("deleted", isEqualTo: false)
+            .snapshots();
+      }
       return _workRouteCollection
           .where("finish", isEqualTo: value == '1' ? true : false)
           .where("deleted", isEqualTo: false)
+          .where("uid", isEqualTo: uid)
           .snapshots();
     }
     return _workRouteCollection.where("deleted", isEqualTo: false).snapshots();
