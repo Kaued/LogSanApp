@@ -152,7 +152,7 @@ class WorkRouteController {
     return ordersInRoute.map((e) => e.data().serviceOrderId).toList();
   }
 
-   Future<List<OrderRoute>> getOrdersInRoute(String routeId) async {
+  Future<List<OrderRoute>> getOrdersInRoute(String routeId) async {
     final ordersInRoute = await _orderRouteRepository.getByRoute(routeId);
 
     return ordersInRoute.map((e) => e.data()).toList();

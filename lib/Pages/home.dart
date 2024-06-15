@@ -12,11 +12,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   AuthController authController = AuthController.instance;
-  final controller = WorkRouteController.instance;
+  final workRouteController = WorkRouteController.instance;
   int workRoutesFinished = 0;
   int totalWorkRoutes = 0;
 
-  int serviceOrdersPending = 0;
+  int serviceOrdersCanceled = 0;
   int serviceOrdersExpired = 0;
   int serviceOrdersFinished = 0;
   int totalServiceOrders = 0;
@@ -29,42 +29,51 @@ class _HomeState extends State<Home> {
 
   Future<void> list() async {
     var todayDate = DateTime.now();
-    var workRoutesStream = controller.getWorkRoutes(
+    var workRoutesStream = workRouteController.getWorkRoutes(
       field: 'to_date',
       value: todayDate.toIso8601String(),
     );
 
     workRoutesStream.listen((snapshot) async {
+      var totalServiceOrdersCount = 0;
+      var serviceOrderFinishedCount = 0;
+      var serviceOrdersExpiredCount = 0;
+      var serviceOrdersCanceledCount = 0;
       for (var doc in snapshot.docs) {
-        var ordersInRoute = await controller.getOrdersInRoute(doc.id);
+        var ordersInRoute = await workRouteController.getOrdersInRoute(doc.id);
 
-        setState(() {
-          totalServiceOrders += ordersInRoute.length;
-        });
+        totalServiceOrdersCount += ordersInRoute.length;
 
         for (var order in ordersInRoute) {
           if (order.statusId == 'nFA55R6v6Jnvc8d76pEt') {
-            setState(() {
-              serviceOrdersFinished++;
-            });
+            serviceOrderFinishedCount++;
+          }
+
+          if(order.statusId == 'rdsEtcKavblvDzkpBZkL') {
+            serviceOrdersCanceledCount++;
           }
         }
 
-        // var serviceOrdersResponse =
-        //     await controller.getServiceOrdersById(ordersInRoute);
+        var serviceOrdersResponse =
+            await workRouteController.getServiceOrdersById(
+                ordersInRoute.map((e) => e.serviceOrderId).toList());
 
-        // for (var serviceOrder in serviceOrdersResponse) {
-        //   serviceOrder.data().
-        // }
+        for (var serviceOrder in serviceOrdersResponse) {
+          if (serviceOrder.data().maxDate.toDate().isBefore(todayDate)) {
+            serviceOrdersExpiredCount++;
+          }
+        }
       }
 
-      // Filtra os documentos que têm status "finalizado"
       var finishedRoutes = snapshot.docs.where((doc) => doc['finish'] == true);
 
-      // Atualiza o estado com a quantidade de itens "finalizados"
       setState(() {
         workRoutesFinished = finishedRoutes.length;
         totalWorkRoutes = snapshot.docs.length;
+        totalServiceOrders = totalServiceOrdersCount;
+        serviceOrdersFinished = serviceOrderFinishedCount;
+        serviceOrdersExpired = serviceOrdersExpiredCount;
+        serviceOrdersCanceled = serviceOrdersCanceledCount;
       });
     });
   }
@@ -177,27 +186,6 @@ class _HomeState extends State<Home> {
                                   ),
                                 ],
                               ),
-                              // const SizedBox(height: 8),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text(
-                              //       "Vencidas: ",
-                              //       style:
-                              //           theme.textTheme.titleMedium!.copyWith(
-                              //         color: Colors.black,
-                              //       ),
-                              //     ),
-                              //     Text(
-                              //       "1",
-                              //       style:
-                              //           theme.textTheme.titleMedium!.copyWith(
-                              //         color: Colors.black,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
                               const SizedBox(height: 8),
                               Row(
                                 mainAxisAlignment:
@@ -274,28 +262,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   )
                                 ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Pendentes: ",
-                                    style:
-                                        theme.textTheme.titleMedium!.copyWith(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    "$serviceOrdersPending",
-                                    style:
-                                        theme.textTheme.titleMedium!.copyWith(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              ),                              
                               const SizedBox(height: 8),
                               Row(
                                 mainAxisAlignment:
@@ -310,6 +277,27 @@ class _HomeState extends State<Home> {
                                   ),
                                   Text(
                                     "$serviceOrdersExpired",
+                                    style:
+                                        theme.textTheme.titleMedium!.copyWith(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Canceladas: ",
+                                    style:
+                                        theme.textTheme.titleMedium!.copyWith(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    "$serviceOrdersCanceled",
                                     style:
                                         theme.textTheme.titleMedium!.copyWith(
                                       color: Colors.black,

@@ -50,4 +50,24 @@ class AuthRepository {
   User getAuthenticatedUser() {
     return FirebaseAuth.instance.currentUser!;
   }
+
+  Future<bool> changeEmail(String email) async {
+    try {
+      await FirebaseAuth.instance.currentUser!.verifyBeforeUpdateEmail(email);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> changePassword(String password) async {
+    try {
+      await FirebaseAuth.instance.currentUser!.updatePassword(password);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
 }

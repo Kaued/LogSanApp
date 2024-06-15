@@ -1,6 +1,7 @@
 class Person {
   Person({
     required this.uid,
+    required this.id,
     required this.email,
     required this.name,
     required this.isAdmin,
@@ -9,6 +10,7 @@ class Person {
 
   Person.fromJson(Map<String, Object?> json)
       : this(
+          id: json["id"]! as String,
           uid: json["uid"]! as String,
           email: json["email"]! as String,
           name: json["name"]! as String,
@@ -16,6 +18,7 @@ class Person {
           isDisabled: json["isDisabled"]! as bool,
         );
 
+  String id;
   String uid;
   String email;
   String name;
@@ -24,6 +27,7 @@ class Person {
 
   Map<String, Object?> toJson() {
     return {
+      "id": id,
       "uid": uid,
       "email": email,
       "name": name,

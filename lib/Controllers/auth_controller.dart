@@ -7,6 +7,7 @@ class AuthController {
   final _authRepository = AuthRepository.instance;
   final userController = UserController.instance;
   Person user = Person(
+    id: '',
     uid: '',
     email: '',
     name: '',
@@ -42,5 +43,19 @@ class AuthController {
     }
 
     return user;
+  }
+
+  bool setAuthenticatedUser(Person user) {
+    this.user = user;
+
+    return true;
+  }
+
+  Future<bool> updateEmail(String email) async {
+    return await _authRepository.changeEmail(email);
+  }
+
+  Future<bool> updatePassword(String password) async {
+    return await _authRepository.changePassword(password);
   }
 }

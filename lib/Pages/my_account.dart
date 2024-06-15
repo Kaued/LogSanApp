@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
+import 'package:logsan_app/Models/person.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
 class MyAccount extends StatefulWidget {
   final void Function() logout;
@@ -59,7 +61,17 @@ class _MyAccountState extends State<MyAccount> {
             child: Column(
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      "/user-form",
+                      arguments: FormArguments<Person>(
+                        isAddMode: false,
+                        values: authController.getAuthenticatedUser(),
+                        id: authController.getAuthenticatedUser().id,
+                        isFromMyAccount: true,
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                   ),
@@ -84,6 +96,7 @@ class _MyAccountState extends State<MyAccount> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.logout),
+                      SizedBox(width: 8),
                       Text('Logout'),
                     ],
                   ),

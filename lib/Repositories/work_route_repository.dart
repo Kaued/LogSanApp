@@ -35,10 +35,10 @@ class WorkRouteRepository {
       value.toDate();
 
       Timestamp initalOfDay = Timestamp.fromDate(
-          DateTime(value.toDate().year, value.toDate().month));
+          DateTime(value.toDate().year, value.toDate().month, value.toDate().day, 0, 0, 0));
 
       Timestamp endOfDay = Timestamp.fromDate(
-          DateTime(value.toDate().year, value.toDate().month, 23, 59, 59));
+          DateTime(value.toDate().year, value.toDate().month, value.toDate().day, 23, 59, 59));
 
       return _workRouteCollection
           .where("to_date", isGreaterThan: initalOfDay, isLessThan: endOfDay)
