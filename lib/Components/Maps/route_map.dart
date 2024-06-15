@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:latlong2/latlong.dart';
@@ -28,6 +29,7 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
   );
 
   StreamSubscription? subscription;
+  StreamSubscription? subscriptionRotation;
 
   LatLng? initialLocation;
   RouteGeoLocation? route;
@@ -50,11 +52,26 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
     super.dispose();
     mapController.dispose();
     subscription?.cancel();
+    subscriptionRotation?.cancel();
   }
 
   Future<void> load() async {
     await getLocation();
     await getRoute();
+
+    final newSubscription = FlutterCompass.events!.listen((event) {
+      if (mounted) {
+        setState(() {
+          rotation = event.heading!;
+        });
+      }
+    });
+
+    if (mounted) {
+      setState(() {
+        subscriptionRotation = newSubscription;
+      });
+    }
   }
 
   Future<void> getLocation() async {
@@ -71,7 +88,7 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
           mapController.centerOnPoint(initialLocation!);
         }
 
-        subscription = streamPosition.listen((event) async {
+        final newSubscription = streamPosition.listen((event) async {
           if (mounted) {
             final newLocation = LatLng(event.latitude, event.longitude);
             if (focusInLocation) {
@@ -79,7 +96,6 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
             }
 
             setState(() {
-              rotation = event.heading;
               initialLocation = newLocation;
             });
 
@@ -100,6 +116,10 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
               }
             }
           }
+        });
+
+        setState(() {
+          subscription = newSubscription;
         });
       }
     } catch (e) {
@@ -169,9 +189,11 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
 
       subscription?.cancel();
     } finally {
-      setState(() {
-        loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 
@@ -222,11 +244,10 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
                     width: 80.0,
                     height: 80.0,
                     point: initialLocation!,
-                    rotate: true,
                     key: const Key("useLocation"),
                     duration: const Duration(milliseconds: 500),
-                    builder: (context, animation) => Transform(
-                      transform: Matrix4.identity()..rotateZ(rotation),
+                    builder: (context, animation) => Transform.rotate(
+                      angle: rotation * pi / 180.0,
                       child: const Icon(
                         Icons.send,
                         color: Colors.green,
