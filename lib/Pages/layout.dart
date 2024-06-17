@@ -12,6 +12,7 @@ import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
 import 'package:logsan_app/Pages/work_routes_form.dart';
+import 'package:logsan_app/Pages/work_routes_list.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 import 'package:logsan_app/Utils/app_routes.dart';
 
@@ -122,7 +123,7 @@ class _LayoutState extends State<Layout> {
       case AppRoutes.myAccont:
         return MyAccount(logout: logout);
       case AppRoutes.workRoutesList:
-        return const RouteMap();
+        return const WorkRoutesList();
       case AppRoutes.workRouteForm:
         return WorkRouteForm(
             arguments: arguments as FormArguments<WorkRoute?>?);
