@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:latlong2/latlong.dart';
@@ -35,7 +34,6 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
   List<LatLng> pointsOriginal = [];
   List<LatLng> points = [];
   bool loading = false;
-  double rotation = 0.0;
 
   bool focusInLocation = true;
 
@@ -79,7 +77,6 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
             }
 
             setState(() {
-              rotation = event.heading;
               initialLocation = newLocation;
             });
 
@@ -223,15 +220,11 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
                     height: 80.0,
                     point: initialLocation!,
                     rotate: true,
-                    key: const Key("useLocation"),
                     duration: const Duration(milliseconds: 500),
-                    builder: (context, animation) => Transform(
-                      transform: Matrix4.identity()..rotateZ(rotation),
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.green,
-                        size: 45.0,
-                      ),
+                    builder: (context, animation) => const Icon(
+                      Icons.circle,
+                      color: Colors.green,
+                      size: 45.0,
                     ),
                   ),
                 ...markers
