@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:logsan_app/Class/route_geo_location.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
+import 'package:logsan_app/Repositories/route_calculate_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/status_repository.dart';
 import 'package:logsan_app/Repositories/type_order_repository.dart';
 import 'package:logsan_app/Repositories/user_repository.dart';
 import 'package:logsan_app/Repositories/work_route_repository.dart';
+import 'package:maps_toolkit/maps_toolkit.dart' as MapKit;
 
 class WorkRouteController {
   final WorkRouteRepository _workRouteRepository = WorkRouteRepository.instance;
@@ -20,6 +25,8 @@ class WorkRouteController {
   final ServiceOrderRepository _serviceOrderRepository =
       ServiceOrderRepository.instance;
   final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
+  final RouteCalculateRepository _routeCalculateRepository =
+      RouteCalculateRepository.instance;
 
   static WorkRouteController instance = WorkRouteController._();
 
@@ -37,7 +44,6 @@ class WorkRouteController {
 
   Stream<QuerySnapshot<WorkRoute>> getWorkRoutes(
       {String? field, String value = ""}) {
-    print(field);
     if (value.isNotEmpty && field != null) {
       if (field == "finish") {
         final orders = _workRouteRepository.getWorkRoutesbyStatus(
@@ -191,5 +197,146 @@ class WorkRouteController {
     }
 
     return;
+  }
+
+  Future<RouteGeoLocation> calculateRoute(
+      {required String id, required GeoPoint start}) async {
+    final workRoute = await _workRouteRepository.findWorkRoute(id);
+    final ordersInRoute = await _orderRouteRepository.getByRoute(workRoute.id);
+
+    final filterOrders = ordersInRoute
+        .where((element) => element.data().statusId == "uQ62CMUv28civO5sUo5M")
+        .toList();
+
+    if (filterOrders.isEmpty) {
+      throw Exception("Nenhuma ordem de serviço disponível");
+    }
+
+    final serviceOrdersId =
+        filterOrders.map((e) => e.data().serviceOrderId).toList();
+
+    final serviceOrder = await _serviceOrderRepository.getListServiceOrderById(
+        ids: serviceOrdersId);
+
+    final List<GeoPoint> points =
+        serviceOrder.map((e) => e.data().geoLocation).toList();
+
+    const GeoPoint end = GeoPoint(-20.800379, -49.3579227);
+
+    try {
+      final route = await _routeCalculateRepository.calculateRoute(
+        points: points,
+        start: start,
+        end: end,
+      );
+
+      return route;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Localização está desabilitado.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Permissão de localização negada.');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+          'Permissão de localização negada para sempre, não podemos solicitar permissão.');
+    }
+    return true;
+  }
+
+  Future<Position> getLocation() async {
+    try {
+      final bool permission = await _handleLocationPermission();
+
+      if (!permission) {
+        throw Exception("Permissão de localização negada");
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    try {
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      return position;
+    } catch (e) {
+      throw Exception("Erro ao obter localização");
+    }
+  }
+
+  List<LatLng> getPointsByLocationUser(
+      {required LatLng userLocation, required List<LatLng> points}) {
+    MapKit.LatLng location =
+        MapKit.LatLng(userLocation.latitude, userLocation.longitude);
+
+    List<MapKit.LatLng> pointsLocation =
+        points.map((e) => MapKit.LatLng(e.latitude, e.longitude)).toList();
+
+    final nearTo = MapKit.PolygonUtil.locationIndexOnPath(
+        location, pointsLocation, false,
+        tolerance: 20);
+
+    if (nearTo < 0) {
+      throw Exception("Usuário não está próximo a rota");
+    }
+
+    for (int i = 0; i <= nearTo; i++) {
+      points.removeAt(i);
+    }
+
+    return points;
+  }
+
+  bool isInPath(LatLng userLocation, List<LatLng> points) {
+    MapKit.LatLng location =
+        MapKit.LatLng(userLocation.latitude, userLocation.longitude);
+
+    List<MapKit.LatLng> pointsLocation =
+        points.map((e) => MapKit.LatLng(e.latitude, e.longitude)).toList();
+
+    final inPath = MapKit.PolygonUtil.isLocationOnPath(
+        location, pointsLocation, false,
+        tolerance: 100);
+
+    return inPath;
+  }
+
+  Future<Stream<Position>> getLocationStream() async {
+    try {
+      final bool permission = await _handleLocationPermission();
+
+      if (!permission) {
+        throw Exception("Permissão de localização negada");
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    try {
+      const LocationSettings options = LocationSettings(
+        accuracy: LocationAccuracy.high,
+      );
+
+      final position = Geolocator.getPositionStream(locationSettings: options);
+
+      return position;
+    } catch (e) {
+      throw Exception("Erro ao obter localização");
+    }
   }
 }
