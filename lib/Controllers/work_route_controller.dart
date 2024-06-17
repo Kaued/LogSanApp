@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logsan_app/Models/order_route.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/status.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Repositories/auth_repository.dart';
@@ -227,5 +228,20 @@ class WorkRouteController {
     }
 
     return;
+  }
+
+  Future<DocumentSnapshot<WorkRoute>> getWorkRouteById(String id) async {
+    return await _workRouteRepository.getWorkRoute(id);
+  }
+
+  Future<List<QueryDocumentSnapshot<OrderRoute>>> getOrdersInRoute(
+      String routeId) async {
+    final ordersInRoute = await _orderRouteRepository.getByRoute(routeId);
+
+    return ordersInRoute;
+  }
+
+  Future<List<QueryDocumentSnapshot<Status>>> getStatus() {
+    return _statusRepository.getStatus();
   }
 }

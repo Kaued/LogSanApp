@@ -8,8 +8,10 @@ import 'package:logsan_app/Pages/home.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
 import 'package:logsan_app/Pages/my_account.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
+import 'package:logsan_app/Pages/service_order_info.dart';
 import 'package:logsan_app/Pages/user_form.dart';
 import 'package:logsan_app/Pages/user_list.dart';
+import 'package:logsan_app/Pages/work_route_orders.dart';
 import 'package:logsan_app/Pages/work_routes_user.dart';
 import 'package:logsan_app/Pages/work_routes_form.dart';
 import 'package:logsan_app/Pages/work_routes_list.dart';
@@ -111,6 +113,14 @@ class _LayoutState extends State<Layout> {
             arguments: arguments as FormArguments<WorkRoute?>?);
       case AppRoutes.workRoutesListUser:
         return const WorkRoutesListUser();
+      case AppRoutes.workRouteOrders:
+        return WorkRouteOrders(
+          arguments: arguments as String,
+        );
+      case AppRoutes.serviceOrderInfo:
+        return ServiceOrderInfo(
+          arguments: arguments as String,
+        );
       default:
         return const Home();
     }

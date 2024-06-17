@@ -128,10 +128,7 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
             },
           )
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.map),
+        automaticallyImplyLeading: false,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -155,24 +152,23 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done &&
                 snapshot.connectionState != ConnectionState.active) {
-              return Container(
-                child: const Card(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
+              return const Center(
+                child: CircularProgressIndicator(),
               );
             }
 
-            if (!snapshot.hasData) {
+            if ((!snapshot.hasData || snapshot.data!.docs.isEmpty) &&
+                inSearch) {
               return const Card(
+                elevation: 0,
                 child: Center(
                   child: Text("Não há Rotas de Serviço"),
                 ),
               );
             }
 
-            final workRouteData = snapshot.data!.docs;
+            final List<QueryDocumentSnapshot<WorkRoute>> workRouteData =
+                !snapshot.hasData ? [] : snapshot.data!.docs;
 
             DateTime today = DateTime.now();
 
@@ -192,448 +188,443 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
               return dataElemento.isBefore(initalOfDay);
             }).toList();
 
-            // return
-            return !inSearch
-                ? SizedBox(
-                    height: screen.height,
-                    width: screen.width,
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 20,
-                              horizontal: 10,
-                            ),
-                            child: ExpansionPanelList(
-                              animationDuration: Durations.medium4,
-                              elevation: 4,
-                              expansionCallback: (panelIndex, isExpanded) {
-                                setState(() {
-                                  switch (panelIndex) {
-                                    case 0:
-                                      showDayRoute = isExpanded;
-                                      break;
-                                    case 1:
-                                      showPreviousRoutes = isExpanded;
-                                      break;
-                                  }
-                                });
-                              },
-                              children: [
-                                ExpansionPanel(
-                                  canTapOnHeader: true,
-                                  headerBuilder: (context, isExpanded) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
-                                        horizontal: 15,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            width: expandedWidth,
-                                            height: 50,
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: const Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    "Rotas de serviços atuais",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  body: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 8),
-                                    child: actualWorkRoutes.isNotEmpty
-                                        ? SizedBox(
-                                            height: 100,
-                                            child: ListView.builder(
-                                              itemCount:
-                                                  actualWorkRoutes.length,
-                                              itemBuilder: (context, index) {
-                                                QueryDocumentSnapshot<Person>?
-                                                    routeUser = user.firstWhere(
-                                                  (element) =>
-                                                      element.id ==
-                                                      actualWorkRoutes[index]
-                                                          .data()
-                                                          .uid,
-                                                );
-
-                                                return GestureDetector(
-                                                  onTap: () {},
-                                                  child: Card(
-                                                    color: Colors.grey[200],
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    elevation: 3,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        vertical: 8,
-                                                        horizontal: 4,
-                                                      ),
-                                                      child: ListTile(
-                                                        leading: SizedBox(
-                                                          width: 90,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              actualWorkRoutes[
-                                                                          index]
-                                                                      .data()
-                                                                      .finish
-                                                                  ? const Icon(
-                                                                      Icons
-                                                                          .check_circle_outline_outlined,
-                                                                      size: 32,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    )
-                                                                  : const Icon(
-                                                                      Icons
-                                                                          .watch_later_outlined,
-                                                                      size: 32,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                              Text(
-                                                                actualWorkRoutes[
-                                                                            index]
-                                                                        .data()
-                                                                        .finish
-                                                                    ? "Finalizado"
-                                                                    : "Pendente",
-                                                                style: theme
-                                                                    .textTheme
-                                                                    .labelSmall!
-                                                                    .copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        title: Text(
-                                                          routeUser.data().name,
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        subtitle: Text(
-                                                            dateFormat.format(
-                                                                actualWorkRoutes[
-                                                                        index]
-                                                                    .data()
-                                                                    .toDate
-                                                                    .toDate())),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 16),
-                                            child: Text(
-                                                "Não há rotas de serviços atuais")),
+            if (!inSearch) {
+              return SizedBox(
+                height: screen.height,
+                width: screen.width,
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 10,
+                        ),
+                        child: ExpansionPanelList(
+                          animationDuration: Durations.medium4,
+                          elevation: 4,
+                          expansionCallback: (panelIndex, isExpanded) {
+                            setState(() {
+                              switch (panelIndex) {
+                                case 0:
+                                  showDayRoute = isExpanded;
+                                  break;
+                                case 1:
+                                  showPreviousRoutes = isExpanded;
+                                  break;
+                              }
+                            });
+                          },
+                          children: [
+                            ExpansionPanel(
+                              canTapOnHeader: true,
+                              headerBuilder: (context, isExpanded) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 20,
+                                    horizontal: 15,
                                   ),
-                                  isExpanded: showDayRoute,
-                                ),
-                                ExpansionPanel(
-                                  headerBuilder: (context, isExpanded) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
-                                        horizontal: 15,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            width: expandedWidth,
-                                            height: 50,
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: const Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    "Rotas de serviços anteriores",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  body: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 8),
-                                    child: previousWorkRoutes.isNotEmpty
-                                        ? SizedBox(
-                                            height: 100,
-                                            child: ListView.builder(
-                                              itemCount:
-                                                  previousWorkRoutes.length,
-                                              itemBuilder: (context, index) {
-                                                QueryDocumentSnapshot<Person>?
-                                                    routeUser = user.firstWhere(
-                                                  (element) =>
-                                                      element.id ==
-                                                      previousWorkRoutes[index]
-                                                          .data()
-                                                          .uid,
-                                                );
-
-                                                return GestureDetector(
-                                                  onTap: () {},
-                                                  child: Card(
-                                                    color: Colors.grey[200],
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    elevation: 3,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        vertical: 8,
-                                                        horizontal: 4,
-                                                      ),
-                                                      child: ListTile(
-                                                        leading: SizedBox(
-                                                          width: 90,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              previousWorkRoutes[
-                                                                          index]
-                                                                      .data()
-                                                                      .finish
-                                                                  ? const Icon(
-                                                                      Icons
-                                                                          .check_circle_outline_outlined,
-                                                                      size: 32,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    )
-                                                                  : const Icon(
-                                                                      Icons
-                                                                          .watch_later_outlined,
-                                                                      size: 32,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                              Text(
-                                                                previousWorkRoutes[
-                                                                            index]
-                                                                        .data()
-                                                                        .finish
-                                                                    ? "Finalizado"
-                                                                    : "Pendente",
-                                                                style: theme
-                                                                    .textTheme
-                                                                    .labelSmall!
-                                                                    .copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        title: Text(
-                                                          routeUser.data().name,
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        subtitle: Text(
-                                                            dateFormat.format(
-                                                                previousWorkRoutes[
-                                                                        index]
-                                                                    .data()
-                                                                    .toDate
-                                                                    .toDate())),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 16),
-                                            child: Text(
-                                                "Não há rotas de serviços anteriores")),
-                                  ),
-                                  isExpanded: showPreviousRoutes,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                : Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 8),
-                      child: ListView.builder(
-                        itemCount: workRouteData.length,
-                        itemBuilder: (context, index) {
-                          QueryDocumentSnapshot<Person>? routeUser =
-                              user.firstWhere(
-                            (element) =>
-                                element.id == workRouteData[index].data().uid,
-                          );
-
-                          return Column(
-                            children: [
-                              Dismissible(
-                                direction: DismissDirection.endToStart,
-                                key: Key(workRouteData[index].id +
-                                    DateTime.now().toString()),
-                                background: Container(
-                                  padding: const EdgeInsets.all(20),
-                                  alignment: Alignment.centerRight,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onDismissed: (_) {
-                                  controller.delete(workRouteData[index].id);
-                                },
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Card(
-                                    color: Colors.grey[200],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    elevation: 3,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8,
-                                        horizontal: 4,
-                                      ),
-                                      child: ListTile(
-                                        leading: SizedBox(
-                                          width: 90,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              workRouteData[index].data().finish
-                                                  ? const Icon(
-                                                      Icons
-                                                          .check_circle_outline_outlined,
-                                                      size: 32,
-                                                      color: Colors.green,
-                                                    )
-                                                  : const Icon(
-                                                      Icons
-                                                          .watch_later_outlined,
-                                                      size: 32,
-                                                      color: Colors.grey,
-                                                    ),
-                                              Text(
-                                                workRouteData[index]
-                                                        .data()
-                                                        .finish
-                                                    ? "Finalizado"
-                                                    : "Pendente",
-                                                style: theme
-                                                    .textTheme.labelSmall!
-                                                    .copyWith(
-                                                  fontWeight: FontWeight.bold,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: expandedWidth,
+                                        height: 30,
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: const Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                "Rotas de serviços atuais",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              body: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16, horizontal: 8),
+                                child: actualWorkRoutes.isNotEmpty
+                                    ? SizedBox(
+                                        height: 100,
+                                        child: ListView.builder(
+                                          itemCount: actualWorkRoutes.length,
+                                          itemBuilder: (context, index) {
+                                            QueryDocumentSnapshot<Person>?
+                                                routeUser = user.firstWhere(
+                                              (element) =>
+                                                  element.id ==
+                                                  actualWorkRoutes[index]
+                                                      .data()
+                                                      .uid,
+                                            );
+
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).pushNamed(
+                                                  AppRoutes.workRouteOrders,
+                                                  arguments:
+                                                      actualWorkRoutes[index]
+                                                          .id,
+                                                );
+                                              },
+                                              child: Card(
+                                                elevation: 0,
+                                                color: Colors.grey[200],
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 4,
+                                                  ),
+                                                  child: ListTile(
+                                                    leading: SizedBox(
+                                                      width: 90,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          actualWorkRoutes[
+                                                                      index]
+                                                                  .data()
+                                                                  .finish
+                                                              ? const Icon(
+                                                                  Icons
+                                                                      .check_circle_outline_outlined,
+                                                                  size: 32,
+                                                                  color: Colors
+                                                                      .green,
+                                                                )
+                                                              : const Icon(
+                                                                  Icons
+                                                                      .watch_later_outlined,
+                                                                  size: 32,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                          Text(
+                                                            actualWorkRoutes[
+                                                                        index]
+                                                                    .data()
+                                                                    .finish
+                                                                ? "Finalizado"
+                                                                : "Pendente",
+                                                            style: theme
+                                                                .textTheme
+                                                                .labelSmall!
+                                                                .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    title: Text(
+                                                      routeUser.data().name,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    subtitle: Text(
+                                                        dateFormat.format(
+                                                            actualWorkRoutes[
+                                                                    index]
+                                                                .data()
+                                                                .toDate
+                                                                .toDate())),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : const Padding(
+                                        padding: EdgeInsets.only(bottom: 16),
+                                        child: Text(
+                                            "Não há rotas de serviços atuais")),
+                              ),
+                              isExpanded: showDayRoute,
+                            ),
+                            ExpansionPanel(
+                              headerBuilder: (context, isExpanded) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 20,
+                                    horizontal: 15,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: expandedWidth,
+                                        height: 30,
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: const Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                "Rotas de serviços anteriores",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              body: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16, horizontal: 8),
+                                child: previousWorkRoutes.isNotEmpty
+                                    ? SizedBox(
+                                        height: 100,
+                                        child: ListView.builder(
+                                          itemCount: previousWorkRoutes.length,
+                                          itemBuilder: (context, index) {
+                                            QueryDocumentSnapshot<Person>?
+                                                routeUser = user.firstWhere(
+                                              (element) =>
+                                                  element.id ==
+                                                  previousWorkRoutes[index]
+                                                      .data()
+                                                      .uid,
+                                            );
+
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).pushNamed(
+                                                  AppRoutes.workRouteOrders,
+                                                  arguments:
+                                                      previousWorkRoutes[index]
+                                                          .id,
+                                                );
+                                              },
+                                              child: Card(
+                                                color: Colors.grey[200],
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                elevation: 0,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 4,
+                                                  ),
+                                                  child: ListTile(
+                                                    leading: SizedBox(
+                                                      width: 90,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          previousWorkRoutes[
+                                                                      index]
+                                                                  .data()
+                                                                  .finish
+                                                              ? const Icon(
+                                                                  Icons
+                                                                      .check_circle_outline_outlined,
+                                                                  size: 32,
+                                                                  color: Colors
+                                                                      .green,
+                                                                )
+                                                              : const Icon(
+                                                                  Icons
+                                                                      .watch_later_outlined,
+                                                                  size: 32,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                          Text(
+                                                            previousWorkRoutes[
+                                                                        index]
+                                                                    .data()
+                                                                    .finish
+                                                                ? "Finalizado"
+                                                                : "Pendente",
+                                                            style: theme
+                                                                .textTheme
+                                                                .labelSmall!
+                                                                .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    title: Text(
+                                                      routeUser.data().name,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    subtitle: Text(
+                                                        dateFormat.format(
+                                                            previousWorkRoutes[
+                                                                    index]
+                                                                .data()
+                                                                .toDate
+                                                                .toDate())),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : const Padding(
+                                        padding: EdgeInsets.only(bottom: 16),
+                                        child: Text(
+                                            "Não há rotas de serviços anteriores")),
+                              ),
+                              isExpanded: showPreviousRoutes,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+            // return
+            return Card(
+              elevation: 0,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                child: ListView.builder(
+                  itemCount: workRouteData.length,
+                  itemBuilder: (context, index) {
+                    QueryDocumentSnapshot<Person>? routeUser = user.firstWhere(
+                      (element) =>
+                          element.id == workRouteData[index].data().uid,
+                    );
+
+                    return Column(
+                      children: [
+                        Dismissible(
+                          direction: DismissDirection.endToStart,
+                          key: Key(workRouteData[index].id +
+                              DateTime.now().toString()),
+                          background: Container(
+                            padding: const EdgeInsets.all(20),
+                            alignment: Alignment.centerRight,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onDismissed: (_) {
+                            controller.delete(workRouteData[index].id);
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                AppRoutes.workRouteOrders,
+                                arguments: workRouteData[index].id,
+                              );
+                            },
+                            child: Card(
+                              color: Colors.grey[200],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 4,
+                                ),
+                                child: ListTile(
+                                  leading: SizedBox(
+                                    width: 90,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        workRouteData[index].data().finish
+                                            ? const Icon(
+                                                Icons
+                                                    .check_circle_outline_outlined,
+                                                size: 32,
+                                                color: Colors.green,
+                                              )
+                                            : const Icon(
+                                                Icons.watch_later_outlined,
+                                                size: 32,
+                                                color: Colors.grey,
+                                              ),
+                                        Text(
+                                          workRouteData[index].data().finish
+                                              ? "Finalizado"
+                                              : "Pendente",
+                                          style: theme.textTheme.labelSmall!
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        title: Text(
-                                          routeUser.data().name,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        subtitle: Text(dateFormat.format(
-                                            workRouteData[index]
-                                                .data()
-                                                .toDate
-                                                .toDate())),
-                                      ),
+                                      ],
                                     ),
                                   ),
+                                  title: Text(
+                                    routeUser.data().name,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(dateFormat.format(
+                                      workRouteData[index]
+                                          .data()
+                                          .toDate
+                                          .toDate())),
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  );
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
           },
         ),
       ),

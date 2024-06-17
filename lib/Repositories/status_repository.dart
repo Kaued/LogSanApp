@@ -11,4 +11,10 @@ class StatusRepository {
         fromFirestore: (snapshot, options) => Status.fromJson(snapshot.data()!),
         toFirestore: (status, options) => status.toJson(),
       );
+
+  Future<List<QueryDocumentSnapshot<Status>>> getStatus() async {
+    final status = await _statusCollection.get();
+
+    return status.docs;
+  }
 }

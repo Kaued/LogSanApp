@@ -86,4 +86,8 @@ class ServiceOrderRepository {
 
     throw Exception("Ordem de serviço não encontrada");
   }
+
+  Future<DocumentSnapshot<ServiceOrder>> getServiceOrderById(String id) async {
+    return await _serviceOrderCollection.doc(id).get();
+  }
 }

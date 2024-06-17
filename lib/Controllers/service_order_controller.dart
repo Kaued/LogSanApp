@@ -163,4 +163,8 @@ class ServiceOrderController {
   Future<void> deletedServiceOrder(String id) async {
     await _serviceOrderRepository.deleteServiceOrder(id);
   }
+
+  Future<DocumentSnapshot<ServiceOrder>> getServiceOrderById(String id) async {
+    return await _serviceOrderRepository.getServiceOrderById(id);
+  }
 }

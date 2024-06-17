@@ -21,4 +21,10 @@ class AppRoutes {
 
   // User Work Route
   static const String workRoutesListUser = "/user/my/work-routes";
+
+  // User Work Route Service Info
+  static const String workRouteOrders = "user/my/work-route-service-orders";
+
+  // Work route service orders form
+  static const String serviceOrderInfo = "user/my/service-order-info";
 }
