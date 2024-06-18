@@ -44,4 +44,18 @@ class OrderRouteRepository {
   Future<void> deleteOrderRoute(String id) async {
     await _orderRouteCollection.doc(id).delete();
   }
+
+  Future<QuerySnapshot<OrderRoute>> getLastOrderRouteByOrder(String id) async {
+    final order = await _orderRouteCollection
+        .where("service_order_id", isEqualTo: id)
+        .orderBy("date", descending: true)
+        .limit(1)
+        .get();
+
+    return order;
+  }
+
+  Future<void> updateOrderRoute(OrderRoute orderRoute, String id) async {
+    await _orderRouteCollection.doc(id).update(orderRoute.toJson());
+  }
 }

@@ -244,4 +244,26 @@ class WorkRouteController {
   Future<List<QueryDocumentSnapshot<Status>>> getStatus() {
     return _statusRepository.getStatus();
   }
+
+  Future<void> finishRoute(String id) async {
+    final route = await _workRouteRepository.getWorkRoute(id);
+
+    final routeData = route.data()!;
+    final date = DateTime.now();
+    routeData.finish = true;
+    routeData.finishAt = Timestamp.fromDate(date);
+
+    final ordersInRoute = await _orderRouteRepository.getByRoute(id);
+
+    for (QueryDocumentSnapshot<OrderRoute> order in ordersInRoute) {
+      final orderData = order.data();
+
+      if (orderData.statusId == "uQ62CMUv28civO5sUo5M") {
+        orderData.statusId = "2bQyWvK3RptcNaSg60N3";
+        await _orderRouteRepository.updateOrderRoute(orderData, order.id);
+      }
+    }
+
+    await _workRouteRepository.updateWorkRoute(routeData, id);
+  }
 }

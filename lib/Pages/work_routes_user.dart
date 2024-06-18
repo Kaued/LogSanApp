@@ -26,8 +26,8 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
   Timer? _debounce;
   final dateFormat = DateFormat("dd/MM/yyyy");
   Map<String, String>? dataUser;
-  bool showDayRoute = false;
-  bool showPreviousRoutes = true;
+  bool showDayRoute = true;
+  bool showPreviousRoutes = false;
 
   @override
   void initState() {
@@ -537,84 +537,64 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
 
                     return Column(
                       children: [
-                        Dismissible(
-                          direction: DismissDirection.endToStart,
-                          key: Key(workRouteData[index].id +
-                              DateTime.now().toString()),
-                          background: Container(
-                            padding: const EdgeInsets.all(20),
-                            alignment: Alignment.centerRight,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
-                          onDismissed: (_) {
-                            controller.delete(workRouteData[index].id);
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              AppRoutes.workRouteOrders,
+                              arguments: workRouteData[index].id,
+                            );
                           },
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushNamed(
-                                AppRoutes.workRouteOrders,
-                                arguments: workRouteData[index].id,
-                              );
-                            },
-                            child: Card(
-                              color: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          child: Card(
+                            color: Colors.grey[200],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 4,
                               ),
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                  horizontal: 4,
-                                ),
-                                child: ListTile(
-                                  leading: SizedBox(
-                                    width: 90,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
+                              child: ListTile(
+                                leading: SizedBox(
+                                  width: 90,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      workRouteData[index].data().finish
+                                          ? const Icon(
+                                              Icons
+                                                  .check_circle_outline_outlined,
+                                              size: 32,
+                                              color: Colors.green,
+                                            )
+                                          : const Icon(
+                                              Icons.watch_later_outlined,
+                                              size: 32,
+                                              color: Colors.grey,
+                                            ),
+                                      Text(
                                         workRouteData[index].data().finish
-                                            ? const Icon(
-                                                Icons
-                                                    .check_circle_outline_outlined,
-                                                size: 32,
-                                                color: Colors.green,
-                                              )
-                                            : const Icon(
-                                                Icons.watch_later_outlined,
-                                                size: 32,
-                                                color: Colors.grey,
-                                              ),
-                                        Text(
-                                          workRouteData[index].data().finish
-                                              ? "Finalizado"
-                                              : "Pendente",
-                                          style: theme.textTheme.labelSmall!
-                                              .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                            ? "Finalizado"
+                                            : "Pendente",
+                                        style: theme.textTheme.labelSmall!
+                                            .copyWith(
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  title: Text(
-                                    routeUser.data().name,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Text(dateFormat.format(
-                                      workRouteData[index]
-                                          .data()
-                                          .toDate
-                                          .toDate())),
                                 ),
+                                title: Text(
+                                  routeUser.data().name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(dateFormat.format(
+                                    workRouteData[index]
+                                        .data()
+                                        .toDate
+                                        .toDate())),
                               ),
                             ),
                           ),

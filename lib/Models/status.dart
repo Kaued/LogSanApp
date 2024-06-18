@@ -7,7 +7,7 @@ class Status {
   Status.fromJson(Map<String, Object?> json)
       : this(
           name: json["name"]! as String,
-          discount: json["discount"]! as double,
+          discount: (json["discount"]! as num).toDouble(),
         );
 
   String name;

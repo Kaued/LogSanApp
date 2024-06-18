@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/order_route.dart';
@@ -69,6 +71,103 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
     });
   }
 
+  Future<void> _onSelected(int value, ThemeData theme) async {
+    switch (value) {
+      case 1:
+        break;
+      case 2:
+        final confirm = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                actionsAlignment: MainAxisAlignment.spaceBetween,
+                titlePadding: const EdgeInsets.all(0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                title: Container(
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(8)),
+                    color: theme.colorScheme.secondary,
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.white),
+                      Flexible(
+                        flex: 3,
+                        fit: FlexFit.tight,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Text(
+                            "Tem certeza?",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                content: const Text(
+                  "Tem certeza que deseja finalizar a rota?",
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Cancelar"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      textStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.primary,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                    child: const Text("Confirmar"),
+                  ),
+                ],
+              );
+            });
+
+        if (confirm == true) {
+          await controllerRoute.finishRoute(routeId!);
+
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -101,7 +200,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
           borderRadius: BorderRadius.circular(50),
         ),
         padding: const EdgeInsets.all(8),
-        child: PopupMenuButton(
+        child: PopupMenuButton<int>(
           offset: const Offset(0, -120),
           icon: const Icon(
             Icons.menu,
@@ -110,6 +209,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
           itemBuilder: (context) {
             return [
               const PopupMenuItem(
+                value: 1,
                 child: Row(
                   children: [
                     Icon(Icons.map),
@@ -118,6 +218,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
                 ),
               ),
               const PopupMenuItem(
+                value: 2,
                 child: Row(
                   children: [
                     Icon(Icons.file_download_done_outlined),
@@ -127,6 +228,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
               ),
             ];
           },
+          onSelected: (value) => _onSelected(value, theme),
         ),
       ),
       body: Container(
@@ -201,7 +303,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
                           switch (status.data().name) {
                             //cinza
                             case "Sem Agendamento":
-                              colorStatus = Colors.grey;
+                              colorStatus = Colors.grey[700]!;
                               break;
                             // verde
                             case "Concluída":
@@ -237,7 +339,8 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 4),
                                     child: ListTile(
                                       leading: SizedBox(
                                         width: 70,
@@ -264,18 +367,24 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            serviceOrdersData[index]
-                                                .data()
-                                                .referenceNumber,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          Flexible(
+                                            child: Text(
+                                              serviceOrdersData[index]
+                                                  .data()
+                                                  .referenceNumber,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
-                                          Text(
-                                            status.data().name.toLowerCase(),
-                                            style: TextStyle(
-                                              color: colorStatus,
-                                              fontWeight: FontWeight.bold,
+                                          Flexible(
+                                            child: Text(
+                                              status.data().name.toLowerCase(),
+                                              style: TextStyle(
+                                                color: colorStatus,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10,
+                                              ),
                                             ),
                                           ),
                                         ],

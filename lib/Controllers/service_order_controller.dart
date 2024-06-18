@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logsan_app/Models/equipment.dart';
 import 'package:logsan_app/Models/service_order.dart';
+import 'package:logsan_app/Models/status.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Repositories/address_repository.dart';
 import 'package:logsan_app/Repositories/equipmet_repository.dart';
+import 'package:logsan_app/Repositories/order_route_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/type_order_repository.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
@@ -14,6 +16,8 @@ class ServiceOrderController {
   final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
   final AddressRepository _addressRepository = AddressRepository.instance;
   final EquipmentRepository _equipmentRepository = EquipmentRepository.instance;
+  final OrderRouteRepository _orderRouteRepository =
+      OrderRouteRepository.instance;
 
   static ServiceOrderController instance = ServiceOrderController._();
 
@@ -166,5 +170,47 @@ class ServiceOrderController {
 
   Future<DocumentSnapshot<ServiceOrder>> getServiceOrderById(String id) async {
     return await _serviceOrderRepository.getServiceOrderById(id);
+  }
+
+  Future<void> updateStatusServiceOrder(
+      {required String id, required String status, DateTime? newDate}) async {
+    final orderRouteLast =
+        await _orderRouteRepository.getLastOrderRouteByOrder(id);
+
+    if (orderRouteLast.docs.isNotEmpty) {
+      final orderRoute = orderRouteLast.docs.first;
+
+      final orderRouteData = orderRoute.data();
+      orderRouteData.statusId = status;
+
+      await _orderRouteRepository.updateOrderRoute(
+          orderRouteData, orderRoute.id);
+    }
+
+    if (newDate != null) {
+      final serviceOrder =
+          await _serviceOrderRepository.getServiceOrderById(id);
+
+      final serviceOrderData = serviceOrder.data();
+
+      serviceOrderData!.maxDate = Timestamp.fromDate(newDate);
+
+      await _serviceOrderRepository.updateServiceOrder(serviceOrderData, id);
+    }
+  }
+
+  Future<String?> getLastStatusInOrder(String id) async {
+    final orderRouteLast =
+        await _orderRouteRepository.getLastOrderRouteByOrder(id);
+
+    if (orderRouteLast.docs.isNotEmpty) {
+      final orderRoute = orderRouteLast.docs.first;
+
+      final orderRouteData = orderRoute.data();
+
+      return orderRouteData.statusId;
+    }
+
+    return null;
   }
 }
