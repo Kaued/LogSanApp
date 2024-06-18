@@ -154,34 +154,46 @@ class _ServiceOrderInfo extends State<ServiceOrderInfo> {
 
     if (confirm!) {
       if (status == "xQdJryD4qLyzVnz6l7As") {
-        DateTime? date = await showDatePicker(
-          context: context,
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-          initialDate: DateTime.now(),
-          currentDate: DateTime.now(),
-        );
-
-        if (context.mounted) {
-          final time = await showTimePicker(
+        if (mounted) {
+          DateTime? date = await showDatePicker(
             context: context,
-            initialTime: TimeOfDay.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+            initialDate: DateTime.now(),
+            currentDate: DateTime.now(),
           );
 
-          if (date != null && time != null) {
-            final dateTimeSelect = DateTime(
-                date.year, date.month, date.day, time.hour, time.minute);
+          if (context.mounted) {
+            final time = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
 
-            await controllerOrder.updateStatusServiceOrder(
-                id: widget.arguments, status: status, newDate: dateTimeSelect);
+            if (date != null && time != null) {
+              final dateTimeSelect = DateTime(
+                  date.year, date.month, date.day, time.hour, time.minute);
+
+              await controllerOrder.updateStatusServiceOrder(
+                  id: widget.arguments,
+                  status: status,
+                  newDate: dateTimeSelect);
+            }
+
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
           }
-        }
 
-        return;
+          return;
+        }
       }
 
       await controllerOrder.updateStatusServiceOrder(
           id: widget.arguments, status: status);
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 

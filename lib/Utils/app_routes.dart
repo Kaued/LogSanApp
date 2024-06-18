@@ -27,4 +27,6 @@ class AppRoutes {
 
   // Work route service orders form
   static const String serviceOrderInfo = "user/my/service-order-info";
+
+  static const String map = "user/my/work-route/map";
 }

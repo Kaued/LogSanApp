@@ -74,6 +74,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
   Future<void> _onSelected(int value, ThemeData theme) async {
     switch (value) {
       case 1:
+        Navigator.of(context).pushNamed(AppRoutes.map, arguments: routeId);
         break;
       case 2:
         final confirm = await showDialog<bool>(
@@ -193,43 +194,45 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
           ],
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.secondary,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        padding: const EdgeInsets.all(8),
-        child: PopupMenuButton<int>(
-          offset: const Offset(0, -120),
-          icon: const Icon(
-            Icons.menu,
-            color: Colors.white,
-          ),
-          itemBuilder: (context) {
-            return [
-              const PopupMenuItem(
-                value: 1,
-                child: Row(
-                  children: [
-                    Icon(Icons.map),
-                    Text("Mapa"),
-                  ],
-                ),
+      floatingActionButton: workRoute != null && !workRoute!.data()!.finish
+          ? Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondary,
+                borderRadius: BorderRadius.circular(50),
               ),
-              const PopupMenuItem(
-                value: 2,
-                child: Row(
-                  children: [
-                    Icon(Icons.file_download_done_outlined),
-                    Text("Finalizar rota")
-                  ],
+              padding: const EdgeInsets.all(8),
+              child: PopupMenuButton<int>(
+                offset: const Offset(0, -120),
+                icon: const Icon(
+                  Icons.menu,
+                  color: Colors.white,
                 ),
+                itemBuilder: (context) {
+                  return [
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          Icon(Icons.map),
+                          Text("Mapa"),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 2,
+                      child: Row(
+                        children: [
+                          Icon(Icons.file_download_done_outlined),
+                          Text("Finalizar rota")
+                        ],
+                      ),
+                    ),
+                  ];
+                },
+                onSelected: (value) => _onSelected(value, theme),
               ),
-            ];
-          },
-          onSelected: (value) => _onSelected(value, theme),
-        ),
-      ),
+            )
+          : null,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

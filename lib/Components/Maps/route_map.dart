@@ -11,7 +11,9 @@ import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Utils/alerts.dart';
 
 class RouteMap extends StatefulWidget {
-  const RouteMap({super.key});
+  const RouteMap({super.key, required this.id});
+
+  final String id;
 
   @override
   State<RouteMap> createState() => _RouteMapState();
@@ -19,7 +21,7 @@ class RouteMap extends StatefulWidget {
 
 class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
   final WorkRouteController controller = WorkRouteController.instance;
-  final String id = "YySHTEGM5fqisvHnImwV";
+  String id = "";
   late final AnimatedMapController mapController = AnimatedMapController(
     vsync: this,
     duration: const Duration(milliseconds: 500),
@@ -40,6 +42,11 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      id = widget.id;
+    });
+
     load();
   }
 
@@ -93,7 +100,10 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
               if (!isInPath) {
                 await getRoute();
                 subscription?.cancel();
-                getLocation();
+
+                if (points.isNotEmpty) {
+                  getLocation();
+                }
               }
             }
           }

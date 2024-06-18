@@ -20,7 +20,8 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
 
-    if (authController.isAuthenticated() && authController.user.uid.isNotEmpty) {
+    if (authController.isAuthenticated() &&
+        authController.user.uid.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_checkConfiguration()) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
@@ -36,8 +37,10 @@ class _LoginState extends State<Login> {
         txtPassword.text,
       );
 
-      if (isSuccessLogin) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
+      if (mounted) {
+        if (isSuccessLogin) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
