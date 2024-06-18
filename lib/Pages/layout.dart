@@ -54,7 +54,7 @@ class _LayoutState extends State<Layout> {
     }
 
     setState(() {
-      initialPage = AppRoutes.workRoutesList;
+      initialPage = AppRoutes.home;
     });
   }
 
