@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
       var serviceOrdersExpiredCount = 0;
       var serviceOrdersCanceledCount = 0;
       for (var doc in snapshot.docs) {
-        var ordersInRoute = await workRouteController.getOrdersInRoute(doc.id);
+        var ordersInRoute = (await workRouteController.getOrdersInRoute(doc.id)).map((e) => e.data()).toList();
 
         totalServiceOrdersCount += ordersInRoute.length;
 
@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
             serviceOrderFinishedCount++;
           }
 
-          if(order.statusId == 'rdsEtcKavblvDzkpBZkL') {
+          if (order.statusId == 'rdsEtcKavblvDzkpBZkL') {
             serviceOrdersCanceledCount++;
           }
         }
@@ -262,7 +262,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   )
                                 ],
-                              ),                              
+                              ),
                               const SizedBox(height: 8),
                               Row(
                                 mainAxisAlignment:
