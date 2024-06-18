@@ -28,7 +28,6 @@ class ServiceOrderForm extends StatefulWidget {
 class _ServiceOrderFormState extends State<ServiceOrderForm> {
   final ServiceOrderController controller = ServiceOrderController.instance;
   final dateFormatBr = DateFormat('dd/MM/yyyy HH:mm');
-  bool _checkConfiguration() => true;
 
   List<QueryDocumentSnapshot<TypeOrder>> typeOrders = [];
   ServiceOrder serviceOrder = ServiceOrder(
@@ -335,31 +334,32 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
         width: screen.width,
         child: Stack(
           children: [
-            SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      theme.colorScheme.primary,
-                      Colors.white,
-                    ],
-                    begin: const FractionalOffset(0, 0),
-                    end: const FractionalOffset(0, 1),
-                    stops: const [0.0, .65],
-                    tileMode: TileMode.clamp,
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    Colors.white,
+                  ],
+                  begin: const FractionalOffset(0, 0),
+                  end: const FractionalOffset(0, 1),
+                  stops: const [0.0, .65],
+                  tileMode: TileMode.clamp,
                 ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 10,
-                ),
+              ),
+              height: screen.height,
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 10,
+              ),
+              child: SingleChildScrollView(
                 child: ExpansionPanelList(
                   animationDuration: Durations.medium4,
                   elevation: 4,
                   expansionCallback: (panelIndex, isExpanded) {
                     serviceOrderForm.currentState!.save();
                     placeForm.currentState!.save();
-
+                            
                     setState(() {
                       switch (panelIndex) {
                         case 0:
@@ -465,7 +465,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 14),
                                 child: ButtonTheme(
-                                  alignedDropdown: true,
+                                  alignedDropdown: false,
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButtonFormField(
                                       validator: (value) {

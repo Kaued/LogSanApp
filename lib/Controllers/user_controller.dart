@@ -55,12 +55,14 @@ class UserController {
     String id, {
     required String name,
     required bool isAdmin,
+    String? email,
   }) async {
     try {
       await _userRepository.update(
         id,
         name: name,
         isAdmin: isAdmin,
+        email: email,
       );
     } catch (e) {
       throw Exception(e);

@@ -35,7 +35,7 @@ class WorkRouteRepository {
       {Timestamp? value, bool admin = true, String uid = ""}) {
     if (value != null) {
       Timestamp initalOfDay = Timestamp.fromDate(DateTime(
-          value.toDate().year, value.toDate().month, value.toDate().day));
+          value.toDate().year, value.toDate().month, value.toDate().day, 0, 0, 0));
       Timestamp endOfDay = Timestamp.fromDate(DateTime(value.toDate().year,
           value.toDate().month, value.toDate().day, 23, 59, 59));
       if (admin) {

@@ -174,6 +174,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
                 horizontal: 8,
               ),
               child: const Card(
+                elevation: 0,
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -200,6 +201,7 @@ class _ListServiceOrderState extends State<ListServiceOrder> {
                 horizontal: 8,
               ),
               child: const Card(
+                elevation: 0,
                 child: Center(
                   child: Text("Não há Ordens de Serviço"),
                 ),

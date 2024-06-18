@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Components/WorkRoutes/work_routes_search.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
@@ -21,7 +20,6 @@ class WorkRoutesList extends StatefulWidget {
 class _WorkRoutesListState extends State<WorkRoutesList> {
   bool inSearch = false;
   final controller = WorkRouteController.instance;
-  // Lista das work routes que atualiza por si
   Stream<QuerySnapshot<WorkRoute>>? streamWorkRoutes = const Stream.empty();
   Timer? _debounce;
   String field = "";
@@ -34,7 +32,6 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
     list();
 
     setState(() {
-      // Já seleciona um valor pra quando for pesquisar
       field = controller.getColumns().entries.first.value;
     });
   }
@@ -87,14 +84,17 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: inSearch
-            ? WorkRoutesSearch(field: field, onSearch: _onSearchChanged)
-            : Text(
-                "Rotas de Serviços",
-                style: theme.textTheme.titleMedium!.copyWith(
-                  color: Colors.white,
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: inSearch
+              ? WorkRoutesSearch(field: field, onSearch: _onSearchChanged)
+              : Text(
+                  "Rotas de Serviços",
+                  style: theme.textTheme.titleMedium!.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
-              ),
+        ),
         actions: [
           IconButton(
             onPressed: toggleSearch,
@@ -106,21 +106,23 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
               return controller
                   .getColumns()
                   .entries
-                  .map((item) => PopupMenuItem(
-                        value: item.value,
-                        child: Text(item.key),
-                      ))
+                  .map(
+                    (item) => PopupMenuItem(
+                      value: item.value,
+                      child: Text(item.key),
+                    ),
+                  )
                   .toList();
             },
             initialValue: field,
             onSelected: (value) {
-              // Pega o valor do filtro que ele selecionou e coloca no field
               setState(() {
                 field = value;
               });
             },
           ),
         ],
+        automaticallyImplyLeading: false,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -154,17 +156,17 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done &&
                 snapshot.connectionState != ConnectionState.active) {
-              return Container(
-                child: const Card(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+              return const Card(
+                elevation: 0,
+                child: Center(
+                  child: CircularProgressIndicator(),
                 ),
               );
             }
 
             if (!snapshot.hasData) {
               return const Card(
+                elevation: 0,
                 child: Center(
                   child: Text("Não há Rotas de Serviço"),
                 ),
@@ -175,6 +177,7 @@ class _WorkRoutesListState extends State<WorkRoutesList> {
 
             // return
             return Card(
+              elevation: 0,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 16, horizontal: 8),

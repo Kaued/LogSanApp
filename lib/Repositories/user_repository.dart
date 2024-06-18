@@ -21,6 +21,8 @@ class UserRepository {
   Future<bool> update(
     String id, {
     String? name,
+    String? email,
+    String? password,
     bool? isAdmin,
     bool? isDisabled,
   }) async {
@@ -33,6 +35,12 @@ class UserRepository {
     if (isAdmin != null) {
       await firestore.collection('users').doc(id).update({
         "isAdmin": isAdmin,
+      });
+    }
+
+    if (email != null) {
+      await firestore.collection('users').doc(id).update({
+        "email": email,
       });
     }
 
@@ -71,7 +79,14 @@ class UserRepository {
   final _userCollection = FirebaseFirestore.instance
       .collection("users")
       .withConverter<Person>(
-        fromFirestore: (snapshot, options) => Person.fromJson(snapshot.data()!),
+        fromFirestore: (snapshot, options) => Person.fromJson({
+          "id": snapshot.id,
+          "uid": snapshot.get("uid"),
+          "email": snapshot.get("email"),
+          "name": snapshot.get("name"),
+          "isAdmin": snapshot.get("isAdmin"),
+          "isDisabled": snapshot.get("isDisabled"),
+        }),
         toFirestore: (person, options) => person.toJson(),
       );
 

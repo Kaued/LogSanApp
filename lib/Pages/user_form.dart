@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Utils/Classes/form_arguments.dart';
@@ -15,6 +16,7 @@ class _UserFormState extends State<UserForm> {
   Person? user;
 
   final UserController _controller = UserController.instance;
+  final AuthController _authController = AuthController.instance;
 
   // Key do formulário
   final formKey = GlobalKey<FormState>();
@@ -85,7 +87,28 @@ class _UserFormState extends State<UserForm> {
           widget.arguments!.id!,
           name: nomeText,
           isAdmin: isAdmin,
+          email: widget.arguments!.isFromMyAccount != null &&
+                  widget.arguments!.isFromMyAccount == true &&
+                  email.text.isNotEmpty &&
+                  email.text != _authController.getAuthenticatedUser().email
+              ? email.text
+              : null,
         );
+
+        if (widget.arguments!.isFromMyAccount != null &&
+            widget.arguments!.isFromMyAccount == true) {
+          if (senha.text.isNotEmpty) {
+            await _authController.updatePassword(senha.text);
+          }
+
+          if (email.text.isNotEmpty &&
+              (email.text != _authController.getAuthenticatedUser().email)) {
+            await _authController.updateEmail(email.text);
+          }
+
+          // await _controller.getByUid(_authController.getAuthenticatedUser().uid) -- this was inside setAuthenticatedUser, i think that is not necessary anymore
+          _authController.setAuthenticatedUser();
+        }
 
         Navigator.of(context).pop();
       } catch (e) {
@@ -166,7 +189,10 @@ class _UserFormState extends State<UserForm> {
                         },
                       ),
                     ),
-                    widget.arguments == null || widget.arguments!.isAddMode
+                    widget.arguments == null ||
+                            widget.arguments!.isAddMode ||
+                            (widget.arguments!.isFromMyAccount != null &&
+                                widget.arguments!.isFromMyAccount == true)
                         ? Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: TextFormField(
@@ -187,7 +213,10 @@ class _UserFormState extends State<UserForm> {
                             ),
                           )
                         : Container(),
-                    widget.arguments == null || widget.arguments!.isAddMode
+                    widget.arguments == null ||
+                            widget.arguments!.isAddMode ||
+                            (widget.arguments!.isFromMyAccount != null &&
+                                widget.arguments!.isFromMyAccount == true)
                         ? Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: TextFormField(
@@ -198,6 +227,12 @@ class _UserFormState extends State<UserForm> {
                                 border: OutlineInputBorder(),
                               ),
                               validator: (value) {
+                                if ((widget.arguments!.isFromMyAccount !=
+                                        null &&
+                                    widget.arguments!.isFromMyAccount ==
+                                        true)) {
+                                  return null;
+                                }
                                 if (value == null || value.isEmpty) {
                                   return 'Por favor, insira uma senha';
                                 }
@@ -209,41 +244,45 @@ class _UserFormState extends State<UserForm> {
                             ),
                           )
                         : Container(),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButtonFormField(
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Por favor, insira o tipo de usuário';
-                              }
-                              return null;
-                            },
-                            value: user == null
-                                ? typeUser.values.first
-                                : user!.isAdmin,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Tipo de Usuário",
+                    widget.arguments == null ||
+                            (widget.arguments!.isFromMyAccount != null &&
+                                widget.arguments!.isFromMyAccount == true)
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: ButtonTheme(
+                              alignedDropdown: false,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField(
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Por favor, insira o tipo de usuário';
+                                    }
+                                    return null;
+                                  },
+                                  value: user == null
+                                      ? typeUser.values.first
+                                      : user!.isAdmin,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Tipo de Usuário",
+                                  ),
+                                  items: typeUser.entries
+                                      .map<DropdownMenuItem>((value) {
+                                    return DropdownMenuItem(
+                                      value: value.value,
+                                      child: Text(value.key),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isAdmin = value;
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                            items:
-                                typeUser.entries.map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value.value,
-                                child: Text(value.key),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                isAdmin = value;
-                              });
-                            },
                           ),
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       height: 40,
                       width: double.infinity,

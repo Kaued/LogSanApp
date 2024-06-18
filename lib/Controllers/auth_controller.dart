@@ -8,6 +8,7 @@ class AuthController {
   final _authRepository = AuthRepository.instance;
   final userController = UserController.instance;
   Person user = Person(
+    id: '',
     uid: '',
     email: '',
     name: '',
@@ -55,5 +56,13 @@ class AuthController {
     User userFireAuth = _authRepository.getAuthenticatedUser();
 
     user = await userController.getByUid(userFireAuth.uid);
+  }
+
+  Future<bool> updateEmail(String email) async {
+    return await _authRepository.changeEmail(email);
+  }
+
+  Future<bool> updatePassword(String password) async {
+    return await _authRepository.changePassword(password);
   }
 }

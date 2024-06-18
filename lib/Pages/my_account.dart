@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
+import 'package:logsan_app/Models/person.dart';
+import 'package:logsan_app/Utils/Classes/form_arguments.dart';
 
 class MyAccount extends StatefulWidget {
   final void Function() logout;
@@ -23,10 +26,13 @@ class _MyAccountState extends State<MyAccount> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(
-          "Minha Conta",
-          style: theme.textTheme.titleMedium!.copyWith(
-            color: Colors.white,
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Text(
+            "Minha Conta",
+            style: theme.textTheme.titleMedium!.copyWith(
+              color: Colors.white,
+            ),
           ),
         ),
         automaticallyImplyLeading: false,
@@ -54,13 +60,29 @@ class _MyAccountState extends State<MyAccount> {
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      authController.user.name,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      "/user-form",
+                      arguments: FormArguments<Person>(
+                        isAddMode: false,
+                        values: authController.getAuthenticatedUser(),
+                        id: authController.getAuthenticatedUser().id,
+                        isFromMyAccount: true,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Editar Perfil'),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -74,6 +96,7 @@ class _MyAccountState extends State<MyAccount> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.logout),
+                      SizedBox(width: 8),
                       Text('Logout'),
                     ],
                   ),
