@@ -81,6 +81,10 @@ class WorkRouteRepository {
     return true;
   }
 
+  Future<DocumentSnapshot<WorkRoute>> findWorkRoute(String id) async {
+    return await _workRouteCollection.doc(id).get();
+  }
+
   Future<String> createWorkRoute(WorkRoute workRoute) async {
     final document = await _workRouteCollection.add(workRoute);
 

@@ -29,6 +29,11 @@ class _BottomBarState extends State<BottomBar> {
   void initState() {
     super.initState();
 
+    if (authController.isAuthenticated() && authController.user.uid.isEmpty) {
+      getUserData();
+      return;
+    }
+
     setState(() {
       pages = authController.user.isAdmin
           ? {
@@ -44,6 +49,23 @@ class _BottomBarState extends State<BottomBar> {
               2: AppRoutes.workRoutesListUser,
             };
     });
+  }
+
+  Future<void> getUserData() async {
+    await authController.setAuthenticatedUser().then((value) => setState(() {
+          pages = authController.user.isAdmin
+              ? {
+                  0: AppRoutes.home,
+                  1: AppRoutes.userList,
+                  2: AppRoutes.workRoutesList,
+                  3: AppRoutes.listServiceOrder,
+                  4: AppRoutes.myAccont,
+                }
+              : {
+                  0: AppRoutes.home,
+                  1: AppRoutes.myAccont,
+                };
+        }));
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Repositories/address_repository.dart';
 import 'package:logsan_app/Repositories/equipmet_repository.dart';
 import 'package:logsan_app/Repositories/order_route_repository.dart';
+import 'package:logsan_app/Repositories/search_geolocation_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/type_order_repository.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
@@ -18,6 +19,8 @@ class ServiceOrderController {
   final EquipmentRepository _equipmentRepository = EquipmentRepository.instance;
   final OrderRouteRepository _orderRouteRepository =
       OrderRouteRepository.instance;
+  final SearchGeolLocationRepository _searchGeolLocationRepository =
+      SearchGeolLocationRepository.instance;
 
   static ServiceOrderController instance = ServiceOrderController._();
 
@@ -212,5 +215,9 @@ class ServiceOrderController {
     }
 
     return null;
+  }
+
+  Future<GeoPoint> getGeoLocationByAddress(Address address) async {
+    return await _searchGeolLocationRepository.getGeoLocationByAddress(address);
   }
 }
