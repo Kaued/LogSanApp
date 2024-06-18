@@ -4,7 +4,6 @@ import 'package:logsan_app/Components/Equipments/equipment_item.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Models/equipment.dart';
 import 'package:logsan_app/Models/service_order.dart';
-import 'package:logsan_app/Models/status.dart';
 import 'package:logsan_app/Models/type_order.dart';
 
 class ServiceOrderInfo extends StatefulWidget {

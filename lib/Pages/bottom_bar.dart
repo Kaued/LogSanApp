@@ -44,9 +44,8 @@ class _BottomBarState extends State<BottomBar> {
               4: AppRoutes.myAccont,
             }
           : {
-              0: AppRoutes.home,
+              0: AppRoutes.workRoutesListUser,
               1: AppRoutes.myAccont,
-              2: AppRoutes.workRoutesListUser,
             };
     });
   }
@@ -62,7 +61,7 @@ class _BottomBarState extends State<BottomBar> {
                   4: AppRoutes.myAccont,
                 }
               : {
-                  0: AppRoutes.home,
+                  0: AppRoutes.workRoutesListUser,
                   1: AppRoutes.myAccont,
                 };
         }));
@@ -120,9 +119,15 @@ class _BottomBarState extends State<BottomBar> {
                 ),
               ]
             : const [
+                // BottomNavigationBarItem(
+                //   icon: Icon(
+                //     Icons.house,
+                //   ),
+                //   label: "",
+                // ),
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.house,
+                    Icons.route,
                   ),
                   label: "",
                 ),
@@ -131,13 +136,7 @@ class _BottomBarState extends State<BottomBar> {
                     Icons.person,
                   ),
                   label: "",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.route,
-                  ),
-                  label: "",
-                ),
+                ),                
               ]);
   }
 }

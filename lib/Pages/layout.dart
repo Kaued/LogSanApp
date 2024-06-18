@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logsan_app/Components/Maps/route_map.dart';
 import 'package:logsan_app/Controllers/auth_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Models/service_order.dart';
@@ -7,6 +6,7 @@ import 'package:logsan_app/Models/work_route.dart';
 import 'package:logsan_app/Pages/bottom_bar.dart';
 import 'package:logsan_app/Pages/home.dart';
 import 'package:logsan_app/Pages/list_service_order.dart';
+import 'package:logsan_app/Pages/loading_screen.dart';
 import 'package:logsan_app/Pages/my_account.dart';
 import 'package:logsan_app/Pages/service_order_form.dart';
 import 'package:logsan_app/Pages/service_order_info.dart';
@@ -57,16 +57,18 @@ class _LayoutState extends State<Layout> {
     }
 
     setState(() {
-      initialPage = AppRoutes.home;
+      initialPage = authController.getAuthenticatedUser().isAdmin
+          ? AppRoutes.home
+          : AppRoutes.workRoutesListUser;
     });
   }
 
   void getUserData() async {
     await authController.setAuthenticatedUser();
 
-    setState(() {
-      initialPage = AppRoutes.workRoutesList;
-    });
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.layout);
+    }
   }
 
   void logout() async {
@@ -141,7 +143,7 @@ class _LayoutState extends State<Layout> {
           arguments: arguments as String,
         );
       default:
-        return const Home();
+        return const LoadingScreen();
     }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:logsan_app/Components/WorkRoutes/work_routes_search.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
@@ -90,18 +91,20 @@ class _WorkRoutesListUserState extends State<WorkRoutesListUser> {
     final theme = Theme.of(context);
     final screen = MediaQuery.of(context).size;
     final double expandedWidth = screen.width - 130;
-    const double expandedHeight = 70;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: inSearch
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: inSearch
             ? WorkRoutesSearch(field: field, onSearch: _onSearchChanged)
             : Text(
                 "Rotas de Serviços",
                 style:
                     theme.textTheme.titleMedium!.copyWith(color: Colors.white),
               ),
+        ),
         actions: [
           IconButton(
             onPressed: toggleSearch,

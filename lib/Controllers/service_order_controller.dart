@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logsan_app/Models/equipment.dart';
 import 'package:logsan_app/Models/service_order.dart';
-import 'package:logsan_app/Models/status.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Repositories/address_repository.dart';
 import 'package:logsan_app/Repositories/equipmet_repository.dart';

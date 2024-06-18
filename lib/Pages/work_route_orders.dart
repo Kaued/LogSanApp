@@ -192,7 +192,6 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
             )
           ],
         ),
-        automaticallyImplyLeading: false,
       ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
