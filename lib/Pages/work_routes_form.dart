@@ -337,16 +337,18 @@ class _WorkRouteFormState extends State<WorkRouteForm> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 14),
-                                child: UserAutocomplete(
-                                  users: users,
-                                  onSelected: (value) {
-                                    setState(() {
-                                      workRoute.uid = value.id;
-                                      userInitialValue = value.data().name;
-                                    });
-                                  },
-                                  userInitialValue: userInitialValue,
-                                  displayOptions: _displayOptions,
+                                child: SizedBox(
+                                  child: UserAutocomplete(
+                                    users: users,
+                                    onSelected: (value) {
+                                      setState(() {
+                                        workRoute.uid = value.id;
+                                        userInitialValue = value.data().name;
+                                      });
+                                    },
+                                    userInitialValue: userInitialValue,
+                                    displayOptions: _displayOptions,
+                                  ),
                                 ),
                               ),
                             ],

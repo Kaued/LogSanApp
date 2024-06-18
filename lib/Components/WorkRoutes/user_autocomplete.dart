@@ -21,17 +21,16 @@ class UserAutocomplete extends StatelessWidget {
     return Autocomplete<QueryDocumentSnapshot<Person>>(
       displayStringForOption: displayOptions,
       optionsBuilder: (TextEditingValue value) {
+        // Se tá vazio manda tudo
         if (value.text.isEmpty) {
           return users.toList();
         }
-
-        return users.where((element) {
-          return element
-              .data()
-              .name
-              .toLowerCase()
-              .contains(value.text.toLowerCase());
-        }).toList();
+        // Se não, filtra
+        return users.where((element) => element
+            .data()
+            .name
+            .toLowerCase()
+            .contains(value.text.toLowerCase()));
       },
       onSelected: onSelected,
       initialValue: TextEditingValue(text: userInitialValue),
@@ -45,30 +44,8 @@ class UserAutocomplete extends StatelessWidget {
         },
         decoration: const InputDecoration(
           labelText: "Usuário",
-          hintText: "Selecione o usuário responsável pela rota.",
+          hintText: "Selecione o usuário",
           border: OutlineInputBorder(),
-        ),
-      ),
-      optionsViewBuilder: (context, onSelected, options) => Align(
-        alignment: Alignment.topLeft,
-        child: Material(
-          elevation: 4,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width - 72,
-            height: 48 * options.length.toDouble(),
-            child: ListView.builder(
-              itemCount: options.length,
-              itemBuilder: (context, index) {
-                final option = options.toList()[index];
-                return ListTile(
-                  title: Text(option.data().name),
-                  onTap: () {
-                    onSelected(option);
-                  },
-                );
-              },
-            ),
-          ),
         ),
       ),
     );
