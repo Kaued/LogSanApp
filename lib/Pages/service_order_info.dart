@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:logsan_app/Components/Equipments/equipment_item.dart';
 import 'package:logsan_app/Controllers/service_order_controller.dart';
 import 'package:logsan_app/Models/equipment.dart';
@@ -205,10 +206,18 @@ class _ServiceOrderInfo extends State<ServiceOrderInfo> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Row(
-          children: [
-            Text("Ordem de serviço: "),
-          ],
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Row(
+            children: [
+              Text(
+                "Ordem de serviço: ",
+                style: theme.textTheme.titleMedium!.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: status == "uQ62CMUv28civO5sUo5M" && status != null
@@ -272,6 +281,7 @@ class _ServiceOrderInfo extends State<ServiceOrderInfo> {
         child: SingleChildScrollView(
           child: serviceOrdersData != null
               ? Card(
+                  elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 16),
@@ -446,6 +456,7 @@ class _ServiceOrderInfo extends State<ServiceOrderInfo> {
                   ),
                 )
               : const Card(
+                  elevation: 0,
                   child: Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text("Não há informações da ordem de serviço"),

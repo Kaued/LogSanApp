@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:latlong2/latlong.dart';
@@ -187,6 +188,18 @@ class _RouteMapState extends State<RouteMap> with TickerProviderStateMixin {
     final theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Text(
+            "Mapa",
+            style: theme.textTheme.titleMedium!.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           FlutterMap(

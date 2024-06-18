@@ -1,4 +1,5 @@
 {
   "cmake.configureOnOpen": true,
-  "cSpell.language": "en,pt-BR"
+  "cSpell.language": "en,pt-BR",
+  "cmake.sourceDirectory": "C:/Users/Mattsz/Desktop/Flutter_Projects/LogSanApp/windows"
 }

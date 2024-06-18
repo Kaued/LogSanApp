@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:logsan_app/Controllers/work_route_controller.dart';
 import 'package:logsan_app/Models/order_route.dart';
@@ -177,21 +178,26 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Rota de serviço",
-              style: theme.textTheme.titleMedium!.copyWith(color: Colors.white),
-            ),
-            Text(
-              workRoute != null
-                  ? dateFormat.format(workRoute!.data()!.toDate.toDate())
-                  : "Carregando",
-              style: theme.textTheme.titleMedium!.copyWith(color: Colors.white),
-            )
-          ],
+        title: Animate(
+          effects: const [FadeEffect()],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Rota de serviço",
+                style:
+                    theme.textTheme.titleMedium!.copyWith(color: Colors.white),
+              ),
+              Text(
+                workRoute != null
+                    ? dateFormat.format(workRoute!.data()!.toDate.toDate())
+                    : "Carregando",
+                style:
+                    theme.textTheme.titleMedium!.copyWith(color: Colors.white),
+              )
+            ],
+          ),
         ),
       ),
       floatingActionButton: workRoute != null && !workRoute!.data()!.finish
@@ -258,6 +264,7 @@ class _WorkRouteOrdersState extends State<WorkRouteOrders> {
               Column(
                 children: [
                   Card(
+                    elevation: 0,
                     child: Container(
                       height: screen.height * 0.8 + 16,
                       padding: const EdgeInsets.only(top: 8),
