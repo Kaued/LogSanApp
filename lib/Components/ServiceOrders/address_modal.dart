@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logsan_app/Components/loading_positioned.dart';
@@ -14,7 +15,7 @@ class AddressModal extends StatefulWidget {
     this.formValues,
   });
 
-  final Function(Address) onSaved;
+  final Function(Address, GeoPoint) onSaved;
   final Address? formValues;
 
   @override
@@ -65,7 +66,9 @@ class _AddressModalState extends State<AddressModal> {
 
   @override
   void initState() {
-    address = widget.formValues ?? address;
+    setState(() {
+      address = widget.formValues ?? address;
+    });
 
     super.initState();
   }
@@ -130,11 +133,25 @@ class _AddressModalState extends State<AddressModal> {
     final theme = Theme.of(context);
     final formKey = GlobalKey<FormState>();
 
-    void saveForm() {
+    Future<void> saveForm() async {
       if (formKey.currentState!.validate()) {
         formKey.currentState!.save();
-        widget.onSaved(address);
-        Navigator.of(context).pop();
+
+        try {
+          final addressGeoPoint =
+              await controller.getGeoLocationByAddress(address);
+
+          widget.onSaved(address, addressGeoPoint);
+          Navigator.of(context).pop();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            Alerts.errorMessage(
+              context: context,
+              message: e.toString(),
+              title: "Erro ao salvar endereço",
+            ),
+          );
+        }
       }
     }
 

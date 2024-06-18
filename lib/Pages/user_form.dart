@@ -106,8 +106,8 @@ class _UserFormState extends State<UserForm> {
             await _authController.updateEmail(email.text);
           }
 
-          _authController.setAuthenticatedUser(await _controller
-              .getByUid(_authController.getAuthenticatedUser().uid));
+          // await _controller.getByUid(_authController.getAuthenticatedUser().uid) -- this was inside setAuthenticatedUser, i think that is not necessary anymore
+          _authController.setAuthenticatedUser();
         }
 
         Navigator.of(context).pop();

@@ -4,6 +4,7 @@ import 'package:logsan_app/Models/service_order.dart';
 import 'package:logsan_app/Models/type_order.dart';
 import 'package:logsan_app/Repositories/address_repository.dart';
 import 'package:logsan_app/Repositories/equipmet_repository.dart';
+import 'package:logsan_app/Repositories/search_geolocation_repository.dart';
 import 'package:logsan_app/Repositories/service_order_repository.dart';
 import 'package:logsan_app/Repositories/type_order_repository.dart';
 import 'package:logsan_app/Utils/Classes/address.dart';
@@ -14,6 +15,8 @@ class ServiceOrderController {
   final TypeOrderRepository _typeOrderRepository = TypeOrderRepository.instance;
   final AddressRepository _addressRepository = AddressRepository.instance;
   final EquipmentRepository _equipmentRepository = EquipmentRepository.instance;
+  final SearchGeolLocationRepository _searchGeolLocationRepository =
+      SearchGeolLocationRepository.instance;
 
   static ServiceOrderController instance = ServiceOrderController._();
 
@@ -162,5 +165,9 @@ class ServiceOrderController {
 
   Future<void> deletedServiceOrder(String id) async {
     await _serviceOrderRepository.deleteServiceOrder(id);
+  }
+
+  Future<GeoPoint> getGeoLocationByAddress(Address address) async {
+    return await _searchGeolLocationRepository.getGeoLocationByAddress(address);
   }
 }

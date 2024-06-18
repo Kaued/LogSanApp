@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:logsan_app/Components/Equipments/equipment_modal.dart';
 import 'package:logsan_app/Components/loading_positioned.dart';
@@ -39,6 +37,7 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
     referenceNumber: "",
     responsible: "",
     typeOrderId: "",
+    geoLocation: const GeoPoint(0, 0),
     maxDate: Timestamp.now(),
     address: Address(
         cep: "",
@@ -219,8 +218,9 @@ class _ServiceOrderFormState extends State<ServiceOrderForm> {
       showModalBottomSheet(
         context: context,
         builder: (context) => AddressModal(
-          onSaved: (value) => setState(() {
-            serviceOrder.address = value;
+          onSaved: (address, geoLocation) => setState(() {
+            serviceOrder.address = address;
+            serviceOrder.geoLocation = geoLocation;
           }),
           formValues: serviceOrder.address,
         ),

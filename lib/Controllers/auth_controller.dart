@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logsan_app/Controllers/user_controller.dart';
 import 'package:logsan_app/Models/person.dart';
 import 'package:logsan_app/Repositories/auth_repository.dart';
@@ -45,10 +46,16 @@ class AuthController {
     return user;
   }
 
-  bool setAuthenticatedUser(Person user) {
-    this.user = user;
+  Future<void> setAuthenticatedUser() async {
+    if (!isAuthenticated()) {
+      logout();
 
-    return true;
+      throw Exception('Usuário não autenticado');
+    }
+
+    User userFireAuth = _authRepository.getAuthenticatedUser();
+
+    user = await userController.getByUid(userFireAuth.uid);
   }
 
   Future<bool> updateEmail(String email) async {
